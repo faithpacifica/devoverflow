@@ -1,4 +1,9 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+body {
+  font-family: "Inter", sans-serif;
+}
 
 @custom-variant dark (&:is(.dark *));
 
@@ -40,7 +45,8 @@
   --background-image-auth-light: url("/images/auth-light.png");
 
   --breakpoint-xs: 420px;
-
+  
+/* Fonts */
   --font-inter: var(--font-inter);
   --font-space-grotesk: var(--font-space-grotesk);
 }
