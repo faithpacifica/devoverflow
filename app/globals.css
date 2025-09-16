@@ -94,19 +94,6 @@ body {
 
 /* *************************** */
 @layer utilities {
-  /* Background utilities */
-
-  /* @utility background-light850_dark100 {
-  @apply bg-light-850 dark:bg-dark-100;
-}   ushbu code ishlamadi va pastdagidek uzgartirildi:
-  .background-light850_dark100 {
-    background-color: theme("colors.light.850");
-  }
-
-  .dark .background-light850_dark100 {
-    background-color: theme("colors.dark.100");
-  }
-*/
 
   .background-light850_dark100 {
     background-color: theme("colors.light.850");
