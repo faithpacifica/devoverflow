@@ -28,7 +28,7 @@ body {
   --color-link-100: #1da1f2;
 
   --radius-2: 8px;
-  --radius-1_5: 6px;
+  --radius-1.5: 6px;
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
