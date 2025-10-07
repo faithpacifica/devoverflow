@@ -6,7 +6,7 @@ import Theme from "./Theme";
 const Navbar = () => {
   return (
     // TODO:BG ni stylelarini tekshirish kerak
-    <nav className="flex-between bg:background-light900_dark200 dark:bg-dark-200   fixed z-50 w-full p-6 dark:shadow-none sm:px-12 gap-5">
+    <nav className="flex-between bg:background-light900_dark200 dark:bg-dark-200   fixed z-50 w-full p-6 dark:shadow-none sm:px-12 gap-5 shadow-2xs">
       <Link href="/" className="flex items-center gap-1">
         <Image
           src="/images/site-logo.svg"

@@ -640,6 +640,7 @@ body {
     background-color: theme("colors.dark.300");
   }
 }
+
 /* ************************ */
 .custom-scrollbar::-webkit-scrollbar {
   width: 3px;
