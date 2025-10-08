@@ -1,1 +1,3 @@
 DevOverFlow is a modern Q&A platform built with the latest Next.js, TypeScript, MongoDB, and Tailwind CSS. It features secure authentication (email, Google, GitHub), advanced routing strategies, and AI-powered automated answers. The project includes scalable architecture with server actions, API routes, real-time revalidation, and MongoDB aggregation pipelines. Designed with ShadCN & Radix UI, it supports responsive layouts, dark/light themes, interactive components, and a recommendation system. Optimized for SEO, accessibility, and performance — this project is a complete modern web app experience.
+
+<img width="1536" height="1024" alt="ebeca57b-74b8-4060-ae25-18fe31c78256" src="https://github.com/user-attachments/assets/7499a2d4-79bd-4da5-923c-770dac3d994e" />
