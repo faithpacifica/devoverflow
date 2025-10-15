@@ -2,10 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import Theme from "./Theme";
+import MobileNavigation from "./MobileNavigation";
 
 const Navbar = () => {
   return (
-    // TODO:BG ni stylelarini tekshirish kerak
     <nav className="flex-between bg:background-light900_dark200 dark:bg-dark-200   fixed z-50 w-full p-6 dark:shadow-none sm:px-12 gap-5 shadow-2xs">
       <Link href="/" className="flex items-center gap-1">
         <Image
@@ -23,6 +23,7 @@ const Navbar = () => {
 
       <div className="flex-between gap-5">
         <Theme />
+        <MobileNavigation />
       </div>
     </nav>
   );
