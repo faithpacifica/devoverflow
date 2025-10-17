@@ -17,7 +17,7 @@ const NavLinks = ({
   // userId?: string;
 }) => {
   const pathname = usePathname();
-const userId = 1
+  const userId = 1;
   return (
     <>
       {sidebarLinks.map((item) => {
