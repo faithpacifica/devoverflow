@@ -1,3 +1,4 @@
+import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/routes";
 import Link from "next/link";
@@ -17,7 +18,7 @@ const Home = async () => {
         </Button>
       </section>
       <section className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
-        LocalSearch
+        <LocalSearch />
       </section>
       HomeFilter
       <div className="mt-10 flex w-full flex-col gap-6">
