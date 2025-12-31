@@ -3,39 +3,49 @@ import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/routes";
 import Link from "next/link";
 
-const Home = async () => {
-  const questions = [
-    {
-      _id: "1",
-      title: "How to learn JavaScript?",
-      description:
-        "I am new to programming and want to learn JavaScript. Any suggestions?",
-      tags: [
-        { _id: "t1", name: "JavaScript" },
-        { _id: "t2", name: "Programming" },
-      ],
-      author: { _id: "1", name: "John Doe" },
-      upvotes: 10,
-      answers: 2,
-      views: 150,
-      createdAt: new Date(),
-    },
-    {
-      _id: "2",
-      title: "How to learn React?",
-      description:
-        "I am new to programming and want to learn JavaScript. Any suggestions?",
-      tags: [
-        { _id: "t1", name: "JavaScript" },
-        { _id: "t2", name: "Programming" },
-      ],
-      author: { _id: "1", name: "John Doe" },
-      upvotes: 10,
-      answers: 2,
-      views: 150,
-      createdAt: new Date(),
-    },
-  ];
+const questions = [
+  {
+    _id: "1",
+    title: "How to learn JavaScript?",
+    description:
+      "I am new to programming and want to learn JavaScript. Any suggestions?",
+    tags: [
+      { _id: "t1", name: "JavaScript" },
+      { _id: "t2", name: "Programming" },
+    ],
+    author: { _id: "1", name: "John Doe" },
+    upvotes: 10,
+    answers: 2,
+    views: 150,
+    createdAt: new Date(),
+  },
+  {
+    _id: "2",
+    title: "How to learn React?",
+    description:
+      "I am new to programming and want to learn JavaScript. Any suggestions?",
+    tags: [
+      { _id: "t1", name: "JavaScript" },
+      { _id: "t2", name: "Programming" },
+    ],
+    author: { _id: "1", name: "John Doe" },
+    upvotes: 10,
+    answers: 2,
+    views: 150,
+    createdAt: new Date(),
+  },
+];
+
+interface SearchParams {
+  searchParams: Promise<{ [key: string]: string }>;
+}
+const Home = async ({ searchParams }: SearchParams) => {
+  const { query =''} = await searchParams;
+  const filteredQuestions = questions.filter(
+    (question) =>
+      question.title.toLowerCase().includes(query?.toLowerCase()) ||
+      question.description.toLowerCase().includes(query?.toLowerCase())
+  );
   return (
     <>
       <section className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
@@ -58,24 +68,23 @@ const Home = async () => {
         />
       </section>
       HomeFilter
-      
       <div className="mt-10 flex w-full flex-col gap-6">
-        {questions.map((question) => (
+        {filteredQuestions.map((question) => (
           <div
             key={question._id}
-            className="rounded-[10px] bg-light-100_darkgradient p-6"
+            className="rounded-[10px] border border-dark200_light700 bg-light-100_dark800 p-6"
           >
-            <h2 className="h2-semibold mb-2 text-dark100_light900">
+            <h2 className="h2-medium mb-2 text-dark100_light900">
               {question.title}
             </h2>
-            <p className="body-regular mb-4 text-dark200_light800">
+            <p className="body-regular mb-4 text-dark300_light600">
               {question.description}
             </p>
             <div className="flex flex-wrap gap-2">
               {question.tags.map((tag) => (
                 <span
                   key={tag._id}
-                  className="body-regular rounded-full bg-light-200_dark300 px-3 py-1 text-dark300_light700"
+                  className="rounded-full bg-dark100_light900/10 px-3 py-1 text-sm text-dark100_light900"
                 >
                   {tag.name}
                 </span>
