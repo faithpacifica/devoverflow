@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { formUrlQuery, removeKeysFromUrlQuery } from "@/lib/url";
 
 interface Props {
-  iconPosition: "left" | "right";
+  // iconPosition: "left" | "right";
   imgSrc: string;
   placeholder: string;
   otherClasses?: string;
@@ -18,7 +18,7 @@ const LocalSearch = ({
   imgSrc,
   placeholder,
   otherClasses,
-  iconPosition,
+  // iconPosition,
 }: Props) => {
   const pathname = usePathname();
   const router = useRouter();
@@ -69,7 +69,7 @@ const LocalSearch = ({
         onChange={(e) => {
           setSearchQuery(e.target.value);
         }}
-        className="paragraph-regular no-focus placeholder text-dark400_light700 !border-none shadow-none !outline-none"
+        className="paragraph-regular no-focus placeholder text-dark400_light700 border-none shadow-none outline-none"
       />
     </div>
   );
