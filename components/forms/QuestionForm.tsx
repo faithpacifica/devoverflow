@@ -5,6 +5,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { AskQuestionSchema } from "@/lib/validations";
 import { Button } from "../ui/button";
+import dynamic from "next/dynamic";
+import React, { useRef } from "react";
 import {
   Form,
   FormControl,
@@ -15,8 +17,21 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
+import type { MDXEditorMethods } from "@mdxeditor/editor";
+
+const Editor = dynamic(() => import("@/components/editor"), {
+  ssr: false,
+});
+
+// interface Params {
+//   question?: Question;
+//   isEdit?: boolean;
+// }
 
 const QuestionForm = () => {
+
+   const editorRef = useRef<MDXEditorMethods>(null);
+
   const form = useForm<z.infer<typeof AskQuestionSchema>>({
     resolver: zodResolver(AskQuestionSchema),
     defaultValues: {
@@ -65,7 +80,11 @@ const QuestionForm = () => {
                 Detailed explanation of your problem{" "}
                 <span className="text-primary-500">*</span>
               </FormLabel>
-              <FormControl>Editor</FormControl>
+              <FormControl>
+
+                <Editor editorRef={editorRef} value={field.value} fieldChange ={field.onChange}/>
+
+              </FormControl>
               <FormDescription className="body-regular mt-2.5 text-light-500">
                 Introduce the problem and expand on what you&apos;ve put in the
                 title.
@@ -103,7 +122,7 @@ const QuestionForm = () => {
         <div className="mt-16 flex justify-end">
           <Button
             type="submit"
-            className="primary-gradient w-fit !text-light-900"
+            className="cursor-pointer !rounded-md primary-gradient w-fit !text-light-900"
           >
             Ask a Question
           </Button>
