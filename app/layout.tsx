@@ -5,7 +5,7 @@ import { Toaster } from "sonner";
 import { ThemeProvider } from "next-themes";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
-import "@mdxeditor/editor/style.css";
+
 
 const inter = localFont({
   src: "./fonts/InterVF.ttf",

@@ -7,6 +7,7 @@ import { AskQuestionSchema } from "@/lib/validations";
 import { Button } from "../ui/button";
 import dynamic from "next/dynamic";
 import React, { useRef } from "react";
+import "@mdxeditor/editor/style.css";
 import {
   Form,
   FormControl,
