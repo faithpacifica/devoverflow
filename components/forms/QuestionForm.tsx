@@ -19,6 +19,7 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import type { MDXEditorMethods } from "@mdxeditor/editor";
+import TagCard from "../cards/TagCard";
 
 const Editor = dynamic(() => import("@/components/editor"), {
   ssr: false,
@@ -30,8 +31,7 @@ const Editor = dynamic(() => import("@/components/editor"), {
 // }
 
 const QuestionForm = () => {
-
-   const editorRef = useRef<MDXEditorMethods>(null);
+  const editorRef = useRef<MDXEditorMethods>(null);
 
   const form = useForm<z.infer<typeof AskQuestionSchema>>({
     resolver: zodResolver(AskQuestionSchema),
@@ -42,7 +42,44 @@ const QuestionForm = () => {
     },
   });
 
-  const handleCreateQuestion = () => {};
+  const handleTageRemove = (tag: string, field: { value: string[] }) => {
+    const newTags = field.value.filter((t) => t !== tag); // t is each tag in the array,while tag is the tag to be removed
+    form.setValue("tags", newTags);
+    if (newTags.length === 0) {
+      form.setError("tags", {
+        type: "manual",
+        message: "Please add at least one tag.",
+      });
+    }
+  };
+  const handleCreateQuestion = (data:z.infer<typeof AskQuestionSchema>) => {
+    console.log(data, 'data')
+  };
+
+  const handleInputKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    field: { value: string[] }
+  ) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const tagInput = e.currentTarget.value.trim();
+      if (tagInput && tagInput.length < 15 && !field.value.includes(tagInput)) {
+        form.setValue("tags", [...field.value, tagInput]);
+        e.currentTarget.value = "";
+        form.clearErrors("tags");
+      } else if (tagInput.length > 15) {
+        form.setError("tags", {
+          type: "manual",
+          message: "Tag should be less than 15 characters.",
+        });
+      } else if (field.value.includes(tagInput)) {
+        form.setError("tags", {
+          type: "manual",
+          message: "Tag already added.",
+        });
+      }
+    }
+  };
 
   return (
     <Form {...form}>
@@ -82,9 +119,11 @@ const QuestionForm = () => {
                 <span className="text-primary-500">*</span>
               </FormLabel>
               <FormControl>
-
-                <Editor editorRef={editorRef} value={field.value} fieldChange ={field.onChange}/>
-
+                <Editor
+                  editorRef={editorRef}
+                  value={field.value}
+                  fieldChange={field.onChange}
+                />
               </FormControl>
               <FormDescription className="body-regular mt-2.5 text-light-500">
                 Introduce the problem and expand on what you&apos;ve put in the
@@ -107,8 +146,25 @@ const QuestionForm = () => {
                   <Input
                     className="paragraph-regular background-light700_dark300 light-border-2 text-dark300_light700 no-focus min-h-[56px] border"
                     placeholder="Add tags..."
+                    onKeyDown={(e) => {
+                      handleInputKeyDown(e, field);
+                    }}
                   />
-                  Tags
+                  {field.value.length > 0 && (
+                    <div className="m-4 flex gap-5">
+                      {field?.value?.map((tag: string) => (
+                        <TagCard
+                          key={tag}
+                          _id={tag}
+                          name={tag}
+                          compact
+                          remove
+                          isButton
+                          handleRemove={() => handleTageRemove(tag, field)}
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
               </FormControl>
               <FormDescription className="body-regular mt-2.5 text-light-500">
