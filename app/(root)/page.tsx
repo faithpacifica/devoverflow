@@ -53,16 +53,38 @@ const questions = [
 
 const test = async () => {
   try {
-   await dbConnect() // Ensure database connection
+  throw new ValidationError({
+    title:['Required'],
+    tags:['At least one tag is required']
+  })
   } catch (error) {
     return handleError(error)
   }
-}
+} /*  quyidagi errorni berdi
+Server  {
+    "status": 400,
+    "success": false,
+    "error": {
+        "message": "Title is required, At least one tag is required",
+        "details": {
+            "title": [
+                "Required"
+            ],
+            "tags": [
+                "At least one tag is required"
+            ]
+        }
+    }
+} 
+    */
 
 interface SearchParams {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }
 const Home = async ({ searchParams }: SearchParams) => {
+const result = await test()
+
+console.log(result)
 
   const params = await searchParams;
 
