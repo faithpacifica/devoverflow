@@ -3,6 +3,8 @@ import HomeFilter from "@/components/filters/HomeFilter";
 import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/routes";
+import { api } from "@/lib/api";
+import handleError from "@/lib/handlers/error";
 import Link from "next/link";
 
 const questions = [
@@ -18,7 +20,8 @@ const questions = [
     author: {
       _id: "1",
       name: "John Doe",
-      image :"https://plus.unsplash.com/premium_photo-1664474619075-644dd191935f?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aW1hZ2V8ZW58MHx8MHx8fDA%3D",
+      image:
+        "https://plus.unsplash.com/premium_photo-1664474619075-644dd191935f?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aW1hZ2V8ZW58MHx8MHx8fDA%3D",
     },
     upvotes: 10,
     answers: 2,
@@ -37,7 +40,8 @@ const questions = [
     author: {
       _id: "1",
       name: "John Doe",
-      image :"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREwEWmFe1Z9ONtQKwNvklC_lXC4E36Br1eJgDwFMtsBNQGPERQuqkjuGdVicS5ElP1EtI&usqp=CAU",
+      image:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREwEWmFe1Z9ONtQKwNvklC_lXC4E36Br1eJgDwFMtsBNQGPERQuqkjuGdVicS5ElP1EtI&usqp=CAU",
     },
     upvotes: 10,
     answers: 2,
@@ -46,14 +50,26 @@ const questions = [
   },
 ];
 
+const test = async() =>{
+  try {
+    return await api.users.getAll();
+  } catch (error) {
+    return handleError(error)
+  }
+}
+
 interface SearchParams {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }
 const Home = async ({ searchParams }: SearchParams) => {
-   const params = await searchParams;
 
-   const query = params.query ?? "";
-   const filter = params.filter ?? "";
+  const users = await test();
+  console.log(users)
+
+  const params = await searchParams;
+
+  const query = params.query ?? "";
+  const filter = params.filter ?? "";
 
   const filteredQuestions = questions.filter((question) => {
     const matchesQuery = question.title
@@ -92,7 +108,7 @@ const Home = async ({ searchParams }: SearchParams) => {
 
       <div className="mt-10 flex w-full flex-col gap-6">
         {filteredQuestions.map((question) => (
-        <QuestionCard key={question._id} question={question} />
+          <QuestionCard key={question._id} question={question} />
         ))}
       </div>
     </>
