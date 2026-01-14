@@ -8,7 +8,7 @@ export interface IAccount {
   provider: string; //Which service is the user using to log in?
   providerAccountId: string; // The unique identifier from the login provider (e.g., GitHub).
 }
-
+export interface IAccountDoc extends IAccount, Document { } // Document interface for Mongoose
 const AccountSchema = new Schema<IAccount>({
   userId: {
     type: Schema.Types.ObjectId,
