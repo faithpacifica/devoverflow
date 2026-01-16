@@ -72,23 +72,23 @@ export async function signUpWithCredentials(
 }
 
 export async function signInWithCredentials(
-  params: Pick<AuthCredentials, "email" | "password">
-): Promise<ActionResponse> {
+  params: Pick<AuthCredentials, "email" | "password"> //Pick yordamida faqat email va password maydonlari olinadi
+): Promise<ActionResponse> { //ActionResponse turi qaytariladi
   const validationResult = await action({ params, schema: SignInSchema });
-
-  if (validationResult instanceof Error) {
+//action funksiyasi yordamida params va SignInSchema bilan validatsiya qilinadi
+  if (validationResult instanceof Error) { 
     return handleError(validationResult) as ErrorResponse;
   }
 
   const { email, password } = validationResult.params!;
-
+//Validatsiyadan o'tgan email va password olinadi
   try {
     const existingUser = await User.findOne({ email });
 
     if (!existingUser) throw new NotFoundError("User");
 
     const existingAccount = await Account.findOne({
-      provider: "credentials",
+      provider: "credentials", //
       providerAccountId: email,
     });
 
