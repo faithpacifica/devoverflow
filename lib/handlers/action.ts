@@ -16,7 +16,7 @@ import { UnauthorizedError, ValidationError } from "../http-errors";
 import dbConnect from "../mongoose";
 
 type ActionOptions<T> = {
-  params?: T;
+  params?: T; //T defaned type parameter bo'lib, u action funksiyasiga beriladigan params ning turini aniqlaydi
   schema?: ZodSchema<T>;
   authorize?: boolean;
 };

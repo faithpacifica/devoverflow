@@ -1,3 +1,5 @@
+"use server";
+
 import { signIn } from "@/auth";
 import bcrypt from "bcryptjs"; 
 import mongoose from "mongoose";
@@ -36,7 +38,7 @@ export async function signUpWithCredentials(
       throw new Error("Username already exists");
     }
 
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const hashedPassword = await bcrypt.hash(password, 12); // 12 bu yerda bcrypt kutubxonasi yordamida parolni hash qilish jarayoni amalga oshiriladi, 12 bu yerda "salt rounds" soni bo'lib, u hash jarayonining murakkabligini belgilaydi
 
     const [newUser] = await User.create([{ username, name, email }], {
       session,
