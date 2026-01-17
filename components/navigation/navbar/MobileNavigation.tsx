@@ -27,16 +27,15 @@ const MobileNavigation = async () => {
           width={36}
           height={36}
           alt="Menu"
-          className="cursor-pointer invert-colors "
+          className="invert-colors sm:hidden "
         />
-        {/* sm:hidden */}
       </SheetTrigger>
       <SheetContent
         side="left"
         className="background-light900_dark200 border-none"
       >
         <SheetTitle className="hidden">Navigation</SheetTitle>
-        <Link href="/" className="flex items-center gap-1">
+        <Link href="/" className="ml-2 mt-4 flex items-center gap-1">
           <Image
             src="/images/site-logo.svg"
             width={23}
@@ -51,12 +50,12 @@ const MobileNavigation = async () => {
 
         <div className="no-scrollbar flex h-[calc(100vh-80px)] flex-col justify-between overflow-y-auto">
           <SheetClose asChild>
-            <section className="flex h-full flex-col gap-6 pt-16">
-              <NavLinks isMobileNav />
+            <section className="flex h-full flex-col gap-3 pt-12">
+              <NavLinks isMobileNav userId ={ userId}  />
             </section>
           </SheetClose>
 
-          <div className="flex flex-col gap-3 px-6">
+          <div className="flex flex-col gap-3">
             {userId ? (
               <SheetClose asChild>
                 <form
@@ -68,10 +67,10 @@ const MobileNavigation = async () => {
                 >
                   <Button
                     type="submit"
-                    className="base-medium w-fit !bg-transparent px-4 py-3"
+                    className="cursor-pointer base-medium w-fit !bg-transparent px-4 py-3"
                   >
                     <LogOut className="size-5 text-black dark:text-white" />
-                    <span className="text-dark300_light900">Logout</span>
+                    <span className="text-dark300_light900">Log Out</span>
                   </Button>
                 </form>
               </SheetClose>
@@ -79,7 +78,7 @@ const MobileNavigation = async () => {
               <>
                 <SheetClose asChild>
                   <Link href={ROUTES.SIGN_IN}>
-                    <Button className="cursor-pointer small-medium btn-secondary min-h-[41px] w-full rounded-lg px-4 py-3 shadow-none">
+                    <Button className="small-medium btn-secondary min-h-[41px] w-full rounded-lg px-4 py-3 shadow-none">
                       <span className="primary-text-gradient">Log In</span>
                     </Button>
                   </Link>
@@ -87,7 +86,7 @@ const MobileNavigation = async () => {
 
                 <SheetClose asChild>
                   <Link href={ROUTES.SIGN_UP}>
-                    <Button className="cursor-pointer small-medium light-border-2 btn-tertiary text-dark400_light900 min-h-[41px] w-full rounded-lg border px-4 py-3 shadow-none">
+                    <Button className="small-medium light-border-2 btn-tertiary text-dark400_light900 min-h-[41px] w-full rounded-lg border px-4 py-3 shadow-none">
                       Sign Up
                     </Button>
                   </Link>
