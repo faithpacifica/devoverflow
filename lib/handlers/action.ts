@@ -26,14 +26,14 @@ type ActionOptions<T> = {
 // 3. Connecting to the database.
 // 4. Returning the params and session.
 
-async function action<T>({
+async function  action<T>({
   params,
   schema,
   authorize = false,
 }: ActionOptions<T>) {
   if (schema && params) {
     try {
-      schema.parse(params);
+      schema.parse(params); //
     } catch (error) {
       if (error instanceof ZodError) {
         return new ValidationError(
