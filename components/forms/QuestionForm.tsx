@@ -20,6 +20,12 @@ import {
 import { Input } from "../ui/input";
 import type { MDXEditorMethods } from "@mdxeditor/editor";
 import TagCard from "../cards/TagCard";
+import { toast } from "sonner";
+import { createQuestion } from "@/lib/actions/question.action";
+import router from "next/router";
+import { useRouter } from "next/navigation";
+import ROUTES from "@/constants/routes";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 const Editor = dynamic(() => import("@/components/editor"), {
   ssr: false,
@@ -31,10 +37,15 @@ const Editor = dynamic(() => import("@/components/editor"), {
 // }
 
 const QuestionForm = () => {
-  const editorRef = useRef<MDXEditorMethods>(null);
+  const router = useRouter();
+
+  const editorRef = useRef<MDXEditorMethods>(null); //editorRef ni yaratamiz va uni MDXEditorMethods turiga o'rnatamiz , useREf bu React hook bo'lib, u komponentlar orasida mutable (o'zgarmas) qiymatlarni saqlash uchun ishlatiladi
+
+  const [isPending, startTransition] = React.useTransition(); // useTransition bu React 18 ning hook i bo'lib, u asinxron operatsiyalarni boshqarish uchun ishlatiladi va foydalanuvchi interfeysining bloklanishining oldini oladi
 
   const form = useForm<z.infer<typeof AskQuestionSchema>>({
-    resolver: zodResolver(AskQuestionSchema),
+    //form ni yaratamiz va uning turini AskQuestionSchema dan infer qilamiz . infer bu Zod kutubxonasining xususiyati bo'lib, u berilgan schema asosida TypeScript turlarini avtomatik ravishda chiqarib olish imkonini beradi
+    resolver: zodResolver(AskQuestionSchema), //resolver bu react-hook-form ga schema asosida formani tekshirish imkonini beradi, zodResolver esa Zod schema larini ishlatish uchun maxsus resolver dir
     defaultValues: {
       title: "",
       content: "",
@@ -52,8 +63,20 @@ const QuestionForm = () => {
       });
     }
   };
-  const handleCreateQuestion = (data:z.infer<typeof AskQuestionSchema>) => {
-    console.log(data, 'data')
+
+  const handleCreateQuestion = async (
+    data: z.infer<typeof AskQuestionSchema>
+  ) => {
+    startTransition(async () => {
+      //startTransition bu React 18 ning hook i bo'lib, u asinxron operatsiyalarni boshlash uchun ishlatiladi va foydalanuvchi interfeysining bloklanishining oldini oladi
+      const result = await createQuestion(data);
+      if (result.success) {
+        toast.success("Question created successfully");
+        if (result.data) router.push(ROUTES.QUESTION(result.data._id));
+      } else {
+        toast.error(result.error?.message || "Failed to create question");
+      }
+    });
   };
 
   const handleInputKeyDown = (
@@ -179,9 +202,17 @@ const QuestionForm = () => {
         <div className="mt-16 flex justify-end">
           <Button
             type="submit"
+            disabled={isPending} //isPending bu React 18 ning useTransition hook dan olingan bo'lib, u asinxron operatsiya davom etayotganligini bildiradi ,isPending true bo'lsa, tugma disabled holatida bo'ladi
             className="cursor-pointer !rounded-md primary-gradient w-fit !text-light-900"
           >
-            Ask a Question
+            {isPending ? (
+              <>
+                <ReloadIcon className="mr-2 size-4 animate-spin" />
+                <span>Submitting</span>
+              </>
+            ) : (
+              <>Ask A Question</>
+            )}
           </Button>
         </div>
       </form>
