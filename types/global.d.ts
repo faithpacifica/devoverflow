@@ -13,6 +13,7 @@ interface Question {
   _id: string;
   title: string;
   author: Author;
+  content: string;
   tags: Tag[];
   createdAt: Date;
   upvotes: number;

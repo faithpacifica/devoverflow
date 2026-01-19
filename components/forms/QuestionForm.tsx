@@ -21,8 +21,7 @@ import { Input } from "../ui/input";
 import type { MDXEditorMethods } from "@mdxeditor/editor";
 import TagCard from "../cards/TagCard";
 import { toast } from "sonner";
-import { createQuestion } from "@/lib/actions/question.action";
-import router from "next/router";
+import { createQuestion, editQuestion } from "@/lib/actions/question.action";
 import { useRouter } from "next/navigation";
 import ROUTES from "@/constants/routes";
 import { ReloadIcon } from "@radix-ui/react-icons";
@@ -31,12 +30,12 @@ const Editor = dynamic(() => import("@/components/editor"), {
   ssr: false,
 });
 
-// interface Params {
-//   question?: Question;
-//   isEdit?: boolean;
-// }
+interface Params {
+  question?: Question;
+  isEdit?: boolean;
+}
 
-const QuestionForm = () => {
+const QuestionForm = ({ question, isEdit = false }: Params) => {
   const router = useRouter();
 
   const editorRef = useRef<MDXEditorMethods>(null); //editorRef ni yaratamiz va uni MDXEditorMethods turiga o'rnatamiz , useREf bu React hook bo'lib, u komponentlar orasida mutable (o'zgarmas) qiymatlarni saqlash uchun ishlatiladi
@@ -47,9 +46,9 @@ const QuestionForm = () => {
     //form ni yaratamiz va uning turini AskQuestionSchema dan infer qilamiz . infer bu Zod kutubxonasining xususiyati bo'lib, u berilgan schema asosida TypeScript turlarini avtomatik ravishda chiqarib olish imkonini beradi
     resolver: zodResolver(AskQuestionSchema), //resolver bu react-hook-form ga schema asosida formani tekshirish imkonini beradi, zodResolver esa Zod schema larini ishlatish uchun maxsus resolver dir
     defaultValues: {
-      title: "",
-      content: "",
-      tags: [],
+      title: question?.title || "",
+      content: question?.content || "",
+      tags: question?.tags.map((tag) => tag.name) || [],
     },
   });
 
@@ -69,6 +68,23 @@ const QuestionForm = () => {
   ) => {
     startTransition(async () => {
       //startTransition bu React 18 ning hook i bo'lib, u asinxron operatsiyalarni boshlash uchun ishlatiladi va foydalanuvchi interfeysining bloklanishining oldini oladi
+
+      // EDIT QUESTION
+      if (isEdit && question) {
+        const result = await editQuestion({
+          ...data,
+          questionId: question?._id,
+        });
+        if (result.success) {
+          toast.success("Question updated successfully");
+          if (result.data) router.push(ROUTES.QUESTION(result.data._id));
+        } else {
+          toast.error(result.error?.message || "Failed to create question");
+        }
+        return; //return qo'shamiz, chunki agar biz edit rejimida bo'lsak, quyidagi createQuestion qismi bajarilmasligi kerak
+      }
+
+      // CREATE QUESTION
       const result = await createQuestion(data);
       if (result.success) {
         toast.success("Question created successfully");
@@ -211,7 +227,7 @@ const QuestionForm = () => {
                 <span>Submitting</span>
               </>
             ) : (
-              <>Ask A Question</>
+              <>{isEdit ? "Edit" : "Ask A Question"}</>
             )}
           </Button>
         </div>
