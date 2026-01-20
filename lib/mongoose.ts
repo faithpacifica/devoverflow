@@ -1,6 +1,7 @@
 import mongoose, { Mongoose } from "mongoose";
 
 import logger from "./logger";
+import "@/database";
 
 const MONGODB_URI = process.env.MONGODB_URI as string;
 
@@ -9,7 +10,7 @@ if (!MONGODB_URI) {
 }
 
 interface MongooseCache {
-  startSession(): unknown;
+  // startSession(): unknown;
   conn: Mongoose | null;
   promise: Promise<Mongoose> | null;
 }

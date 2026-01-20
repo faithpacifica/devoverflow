@@ -26,21 +26,24 @@ const Metric = ({
   isAuthor,
   titleStyles,
 }: Props) => {
+  const imageSrc = imgUrl && imgUrl !== "" ? imgUrl : "/icons/avatar.svg";
+  const imageAlt = alt && alt !== "" ? alt : "User avatar";
+
   const metricContent = (
     <>
       <Image
-        src={imgUrl}
-        width={20}
-        height={20}
-        alt={alt}
-        className={`rounded-full object-contain ${imgStyles}`}
+        src={imageSrc}
+        width={25}
+        height={25}
+        alt={imageAlt}
+        className={`rounded-full object-cover ${imgStyles}`}
       />
 
       <p className={`${textStyles} flex items-center gap-1`}>
         {value}
 
         {title ? (
-          <span className={cn(`small-regular line-clamp-1 ${isAuthor? "max-sm:hidden": ""}`, titleStyles)}>
+          <span className={cn(`small-regular line-clamp-1`, titleStyles)}>
             {title}
           </span>
         ) : null}
