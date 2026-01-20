@@ -8,7 +8,12 @@ import Tag, { ITagDoc } from "@/database/tag.model";
 
 import action from "../handlers/action";
 import handleError from "../handlers/error";
-import { AskQuestionSchema, EditQuestionSchema, GetQuestionSchema, } from "../validations";
+import {
+  AskQuestionSchema,
+  EditQuestionSchema,
+  GetQuestionSchema,
+  PaginatedSearchParamsSchema,
+} from "../validations";
 
 export async function createQuestion(
   params: CreateQuestionParams
@@ -39,14 +44,14 @@ export async function createQuestion(
       throw new Error("Failed to create question");
     }
 
-    const tagIds: mongoose.Types.ObjectId[] = [];//taglar uchun bo'sh massiv yaratamiz. Types.ObjectId bu Mongoose ning maxsus turi bo'lib, u MongoDB ning ObjectId larini ifodalaydi va ular hujjatlarni noyob identifikatsiya qilish uchun ishlatiladi
+    const tagIds: mongoose.Types.ObjectId[] = []; //taglar uchun bo'sh massiv yaratamiz. Types.ObjectId bu Mongoose ning maxsus turi bo'lib, u MongoDB ning ObjectId larini ifodalaydi va ular hujjatlarni noyob identifikatsiya qilish uchun ishlatiladi
     const tagQuestionDocuments = [];
 
     for (const tag of tags) {
       const existingTag = await Tag.findOneAndUpdate(
         { name: { $regex: new RegExp(`^${tag}$`, "i") } }, //$regex bu regular expression,vazifasi bilan tag nomini qidiradi, ^ va $ belgilar bilan to'liq moslikni ta'minlaydi,
         //i bu case-insensitive qidiruv
-        { $setOnInsert: { name: tag }, $inc: { questions: 1 } },//$setOnInsert - yangi tag yaratilganda name maydonini o'rnatadi,$inc - mavjud tag bo'lsa, uning questions maydonini 1 ga oshiradi
+        { $setOnInsert: { name: tag }, $inc: { questions: 1 } }, //$setOnInsert - yangi tag yaratilganda name maydonini o'rnatadi,$inc - mavjud tag bo'lsa, uning questions maydonini 1 ga oshiradi
         { upsert: true, new: true, session } //upsert: agar mos keladigan hujjat topilmasa, yangi hujjat yaratadi,new: yangilangan yoki kiritilgan hujjatni qaytaradi
       );
 
@@ -59,9 +64,10 @@ export async function createQuestion(
 
     await TagQuestion.insertMany(tagQuestionDocuments, { session }); //TagQuestion kolleksiyasiga barcha tag-question hujjatlarini qo'shamiz
 
-    await Question.findByIdAndUpdate( // question hujjatini yangilaymiz, unga tegishli tag larni qo'shamiz
+    await Question.findByIdAndUpdate(
+      // question hujjatini yangilaymiz, unga tegishli tag larni qo'shamiz
       question._id, //qaysi question ni yangilash kerakligini aniqlaymiz
-      { $push: { tags: { $each: tagIds } } },//tags maydoniga barcha tagIds ni qo'shamiz
+      { $push: { tags: { $each: tagIds } } }, //tags maydoniga barcha tagIds ni qo'shamiz
       { session } //transaction session ni o'tkazamiz
     );
 
@@ -75,7 +81,6 @@ export async function createQuestion(
     session.endSession();
   }
 }
-
 
 export async function editQuestion(
   params: EditQuestionParams
@@ -177,7 +182,6 @@ export async function editQuestion(
   }
 }
 
-
 //get question details action whether we have edited everything correctly
 export async function getQuestion(
   params: GetQuestionParams
@@ -195,13 +199,96 @@ export async function getQuestion(
   const { questionId } = validationResult.params!;
 
   try {
-    const question = await Question.findById(questionId).populate("tags");
+    const question = await Question.findById(questionId)
+      .populate("tags", "_id name")
+      .populate("author", "_id name image");
 
     if (!question) {
       throw new Error("Question not found");
     }
 
     return { success: true, data: JSON.parse(JSON.stringify(question)) };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+}
+
+// FETCH ALL THE QUESTIONS BASED ON THE SEARCH CRITERIA
+export async function getQuestions(
+  params: PaginatedSearchParams
+): Promise<ActionResponse<{ questions: Question[]; isNext: boolean }>> {
+  const validationResult = await action({
+    params,
+    schema: PaginatedSearchParamsSchema,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { page = 1, pageSize = 10, query, filter } = params;
+  const skip = (Number(page) - 1) * pageSize;
+  const limit = Number(pageSize);
+
+  // const filterQuery: FilterQuery<typeof Question> = {};
+  type QuestionFilter = {
+    $or?: {
+      title?: { $regex: RegExp };
+      content?: { $regex: RegExp };
+    }[];
+    answers?: number;
+  };
+  const filterQuery: QuestionFilter = {};
+
+  if (filter === "recommended") {
+    return { success: true, data: { questions: [], isNext: false } };
+  }
+
+  // Search query filtering
+  if (query) {
+    filterQuery.$or = [
+      { title: { $regex: new RegExp(query, "i") } },
+      { content: { $regex: new RegExp(query, "i") } },
+    ];
+  }
+
+  let sortCriteria = {};
+
+  switch (filter) {
+    case "newest":
+      sortCriteria = { createdAt: -1 };
+      break;
+    case "unanswered":
+      filterQuery.answers = 0;
+      sortCriteria = { createdAt: -1 };
+      break;
+    case "popular":
+      sortCriteria = { upvotes: -1 };
+      break;
+    default:
+      sortCriteria = { createdAt: -1 };
+      break;
+  }
+
+  try {
+    const totalQuestions = await Question.countDocuments(filterQuery);
+
+    const questions = await Question.find(filterQuery)
+      .populate("tags", "name")
+      .populate("author", "name image")
+      .lean()
+      .sort(sortCriteria)
+      .skip(skip)
+      .limit(limit);
+
+      // Determine if there is a next page
+    const isNext = totalQuestions > skip + questions.length;
+
+    
+    return {
+      success: true,
+      data: { questions: JSON.parse(JSON.stringify(questions)), isNext },
+    };
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }
