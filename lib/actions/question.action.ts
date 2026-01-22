@@ -8,6 +8,7 @@ import Tag, { ITagDoc } from "@/database/tag.model";
 
 import action from "../handlers/action";
 import handleError from "../handlers/error";
+import Tags from "../../app/(root)/tags/page";
 import {
   AskQuestionSchema,
   EditQuestionSchema,
@@ -85,6 +86,7 @@ export async function createQuestion(
 export async function editQuestion(
   params: EditQuestionParams
 ): Promise<ActionResponse<IQuestionDoc>> {
+  // IQuestionDoc ni urniga Question bulgan ekan
   const validationResult = await action({
     params,
     schema: EditQuestionSchema,
@@ -103,6 +105,7 @@ export async function editQuestion(
 
   try {
     const question = await Question.findById(questionId).populate("tags");
+    console.log(question, "questions");
     if (!question) throw new Error("Question not found");
 
     if (question.author.toString() !== userId) {
@@ -118,10 +121,11 @@ export async function editQuestion(
     // Determine tags to add and remove
     const tagsToAdd = tags.filter(
       (tag) =>
-        !question.tags.some(
-          (t: ITagDoc) => t.name.toLowerCase() === tag.toLowerCase()
+        !question.tags.some((t: ITagDoc) =>
+          t.name.toLowerCase().includes(tag.toLowerCase())
         )
     );
+    console.log(tags, "tags");
 
     const tagsToRemove = question.tags.filter(
       (tag: ITagDoc) =>
@@ -130,6 +134,7 @@ export async function editQuestion(
 
     // Add new tags
     const newTagDocuments = [];
+
     if (tagsToAdd.length > 0) {
       for (const tag of tagsToAdd) {
         const newTag = await Tag.findOneAndUpdate(
@@ -167,6 +172,7 @@ export async function editQuestion(
           )
       );
     }
+    console.log(question.tags, "question tags");
 
     // Insert new TagQuestion documents
     if (newTagDocuments.length > 0) {
@@ -206,6 +212,7 @@ export async function getQuestion(
     const question = await Question.findById(questionId)
       .populate("tags", "_id name")
       .populate("author", "_id name image");
+    console.log(question, "data");
 
     if (!question) {
       throw new Error("Question not found");
@@ -284,6 +291,7 @@ export async function getQuestions(
     const totalQuestions = await Question.countDocuments(filterQuery); //
 
     const questions = await Question.find(filterQuery) // qidiruv mezonlariga mos keladigan savollarni topadi
+
       .populate("tags", "name") // tag larni nomlari bilan birga oladi
       .populate("author", "name image")
       // muallifning nomi va rasm ma'lumotlarini oladi
@@ -295,7 +303,7 @@ export async function getQuestions(
     // Determine if there is a next page
     const isNext = totalQuestions > skip + questions.length;
     //agar jami savollar soni, o'tkazib yuborilgan savollar soni va hozirgi sahifadagi savollar sonining yig'indisidan katta bo'lsa, demak keyingi sahifa mavjud
-
+    console.log(totalQuestions, "data");
     return {
       success: true,
       data: { questions: JSON.parse(JSON.stringify(questions)), isNext }, //questions massivini JSON ga aylantirib qaytaradi

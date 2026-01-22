@@ -75,14 +75,17 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
           ...data,
           questionId: question?._id,
         });
+        console.log(result, "result")
         if (result.success) {
           toast.success("Question updated successfully");
+          // TODO:_id ni hal qilish, edit page ishlamayapti
           if (result.data) router.push(ROUTES.QUESTION(result.data._id));
         } else {
           toast.error(result.error?.message || "Failed to create question");
         }
         return; //return qo'shamiz, chunki agar biz edit rejimida bo'lsak, quyidagi createQuestion qismi bajarilmasligi kerak
       }
+
 
       // CREATE QUESTION
       const result = await createQuestion(data);

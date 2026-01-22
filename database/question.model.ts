@@ -12,7 +12,6 @@ export interface IQuestion {
 }
 
 export interface IQuestionDoc extends IQuestion, Document {}
-
 const QuestionSchema = new Schema<IQuestion>(
   {
     title: { type: String, required: true },
