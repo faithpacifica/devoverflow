@@ -1,4 +1,5 @@
 import { FilterQuery } from "mongoose";
+// TODO:FilterQuery ni ovozini uchirish
 import action from "../handlers/action";
 import handleError from "../handlers/error";
 import { PaginatedSearchParamsSchema } from "../validations";
