@@ -86,7 +86,6 @@ export async function createQuestion(
 export async function editQuestion(
   params: EditQuestionParams
 ): Promise<ActionResponse<IQuestionDoc>> {
-  // IQuestionDoc ni urniga Question bulgan ekan
   const validationResult = await action({
     params,
     schema: EditQuestionSchema,
