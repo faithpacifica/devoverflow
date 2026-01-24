@@ -52,7 +52,7 @@ export async function createQuestion(
       const existingTag = await Tag.findOneAndUpdate(
         { name: { $regex: new RegExp(`^${tag}$`, "i") } }, //$regex bu regular expression,vazifasi bilan tag nomini qidiradi, ^ va $ belgilar bilan to'liq moslikni ta'minlaydi,
         //i bu case-insensitive qidiruv
-        { $setOnInsert: { name: tag }, $inc: { questions: 1 } }, //$setOnInsert - yangi tag yaratilganda name maydonini o'rnatadi,$inc - mavjud tag bo'lsa, uning questions maydonini 1 ga oshiradi
+        { $setOnInsert: { name: tag }, $inc: { question: 1 } }, //$setOnInsert - yangi tag yaratilganda name maydonini o'rnatadi,$inc - mavjud tag bo'lsa, uning questions maydonini 1 ga oshiradi
         { upsert: true, new: true, session } //upsert: agar mos keladigan hujjat topilmasa, yangi hujjat yaratadi,new: yangilangan yoki kiritilgan hujjatni qaytaradi
       );
 
@@ -138,7 +138,7 @@ export async function editQuestion(
       for (const tag of tagsToAdd) {
         const newTag = await Tag.findOneAndUpdate(
           { name: { $regex: `^${tag}$`, $options: "i" } },
-          { $setOnInsert: { name: tag }, $inc: { questions: 1 } },
+          { $setOnInsert: { name: tag }, $inc: { question: 1 } },
           { upsert: true, new: true, session }
         );
 
@@ -155,7 +155,7 @@ export async function editQuestion(
 
       await Tag.updateMany(
         { _id: { $in: tagIdsToRemove } },
-        { $inc: { questions: -1 } },
+        { $inc: { question: -1 } },
         { session }
       );
 
@@ -289,7 +289,7 @@ export async function getQuestions(
   try {
     const totalQuestions = await Question.countDocuments(filterQuery); //
 
-    const questions = await Question.find(filterQuery) // qidiruv mezonlariga mos keladigan savollarni topadi
+    const question = await Question.find(filterQuery) // qidiruv mezonlariga mos keladigan savollarni topadi
 
       .populate("tags", "name") // tag larni nomlari bilan birga oladi
       .populate("author", "name image")
@@ -300,12 +300,12 @@ export async function getQuestions(
       .limit(limit); // how many questions per page
 
     // Determine if there is a next page
-    const isNext = totalQuestions > skip + questions.length;
+    const isNext = totalQuestions > skip + question.length;
     //agar jami savollar soni, o'tkazib yuborilgan savollar soni va hozirgi sahifadagi savollar sonining yig'indisidan katta bo'lsa, demak keyingi sahifa mavjud
     console.log(totalQuestions, "data");
     return {
       success: true,
-      data: { questions: JSON.parse(JSON.stringify(questions)), isNext }, //questions massivini JSON ga aylantirib qaytaradi
+      data: { questions: JSON.parse(JSON.stringify(question)), isNext }, //questions massivini JSON ga aylantirib qaytaradi
     };
   } catch (error) {
     return handleError(error) as ErrorResponse;

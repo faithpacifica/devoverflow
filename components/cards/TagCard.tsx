@@ -9,7 +9,7 @@ import Image from "next/image";
 interface Props {
   _id: string;
   name: string;
-  questions?: number;
+  question?: number;
   showCount?: boolean;
   compact?: boolean;
   isButton?: boolean;
@@ -20,7 +20,7 @@ interface Props {
 const TagCard = ({
   _id,
   name,
-  questions,
+  question,
   showCount,
   compact,
   isButton,
@@ -29,7 +29,7 @@ const TagCard = ({
 }: Props) => {
   const iconClass = getDeviconClassName(name);
   const iconDescription = getTechDescription(name);
-console.log(questions, 'questions')
+console.log(question, 'questions')
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
   };
@@ -55,7 +55,7 @@ console.log(questions, 'questions')
       </Badge>
 
       {showCount && (
-        <p className="small-medium text-dark500_light700">{questions}</p>
+        <p className="small-medium text-dark500_light700">{question}</p>
       )}
     </>
   );
@@ -88,7 +88,7 @@ console.log(questions, 'questions')
 
         <p className="small-medium text-dark400_light500 mt-3.5">
           <span className="body-semibold primary-text-gradient mr-2.5">
-            {questions}+
+            {question}+
           </span>
           Questions
         </p>
