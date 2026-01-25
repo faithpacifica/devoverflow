@@ -55,7 +55,7 @@ export async function createQuestion(
         { $setOnInsert: { name: tag }, $inc: { question: 1 } }, //$setOnInsert - yangi tag yaratilganda name maydonini o'rnatadi,$inc - mavjud tag bo'lsa, uning questions maydonini 1 ga oshiradi
         { upsert: true, new: true, session } //upsert: agar mos keladigan hujjat topilmasa, yangi hujjat yaratadi,new: yangilangan yoki kiritilgan hujjatni qaytaradi
       );
-
+      console.log('Updated tag for', tag, ':', existingTag);
       tagIds.push(existingTag._id); //tagIds massiviga tag ning _id sini qo'shamiz
       tagQuestionDocuments.push({
         tag: existingTag._id,
@@ -71,7 +71,7 @@ export async function createQuestion(
       { $push: { tags: { $each: tagIds } } }, //tags maydoniga barcha tagIds ni qo'shamiz
       { session } //transaction session ni o'tkazamiz
     );
-
+    console.log('Transaction committed successfully');
     await session.commitTransaction();
 
     return { success: true, data: JSON.parse(JSON.stringify(question)) }; //question obyektini JSON ga aylantirib frontendga qaytaradi
@@ -141,12 +141,13 @@ export async function editQuestion(
           { $setOnInsert: { name: tag }, $inc: { question: 1 } },
           { upsert: true, new: true, session }
         );
-
+        console.log('Updated tag for', tag, ':', newTag);
         if (newTag) {
           newTagDocuments.push({ tag: newTag._id, question: questionId });
           question.tags.push(newTag._id);
         }
       }
+      console.log(question.tags, "question tags");
     }
 
     // Remove tags
@@ -171,7 +172,6 @@ export async function editQuestion(
           )
       );
     }
-    console.log(question.tags, "question tags");
 
     // Insert new TagQuestion documents
     if (newTagDocuments.length > 0) {
@@ -269,7 +269,7 @@ export async function getQuestions(
   let sortCriteria = {};
 
   switch (
-    filter //filter ga qarab saralash mezonlarini belgilaydi
+  filter //filter ga qarab saralash mezonlarini belgilaydi
   ) {
     case "newest":
       sortCriteria = { createdAt: -1 }; //-1 bu kamayish tartibini bildiradi, ya'ni yangi yaratilganlar birinchi bo'ladi

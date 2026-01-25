@@ -50,7 +50,7 @@ const RightSidebar = () => {
               key={_id}
               _id={_id}
               name={name}
-              questions={questions}
+              question={questions}
               showCount={true}
               compact
             />

@@ -87,8 +87,9 @@ console.log(question, 'questions')
         </p>
 
         <p className="small-medium text-dark400_light500 mt-3.5">
+          {/* TODO:question 0 kevoti, datani tekshirish */}
           <span className="body-semibold primary-text-gradient mr-2.5">
-            {question}+
+            {question}+ 
           </span>
           Questions
         </p>
