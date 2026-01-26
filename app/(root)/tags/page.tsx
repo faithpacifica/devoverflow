@@ -4,7 +4,6 @@ import LocalSearch from "@/components/search/LocalSearch";
 import ROUTES from "@/constants/routes";
 import { EMPTY_TAGS } from "@/constants/states";
 import { getTags } from "@/lib/actions/tag.action";
-import React from "react";
 
 const Tags = async ({ searchParams }: RouteParams) => {
   const { page, pageSize, query, filter } = await searchParams;
@@ -16,11 +15,11 @@ const Tags = async ({ searchParams }: RouteParams) => {
   });
 
   const { tags } = data || {};
-console.log(tags, 'tags')
-  console.log("TAGS", JSON.stringify(tags, null, 1));
+
   return (
     <>
       <h1 className="h1-bold text-dark100_light900 text3xl">Tags</h1>
+      
       <section className="mt-11">
         <LocalSearch
           route={ROUTES.TAGS}

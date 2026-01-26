@@ -26,17 +26,14 @@ const Metric = ({
   isAuthor,
   titleStyles,
 }: Props) => {
-  const imageSrc = imgUrl && imgUrl !== "" ? imgUrl : "/icons/avatar.svg";
-  const imageAlt = alt && alt !== "" ? alt : "User avatar";
-
   const metricContent = (
     <>
       <Image
-        src={imageSrc}
-        width={25}
-        height={25}
-        alt={imageAlt}
-        className={`rounded-full object-cover ${imgStyles}`}
+        src={imgUrl}
+        width={16}
+        height={16}
+        alt={alt}
+        className={`rounded-full object-contain ${imgStyles}`}
       />
 
       <p className={`${textStyles} flex items-center gap-1`}>
