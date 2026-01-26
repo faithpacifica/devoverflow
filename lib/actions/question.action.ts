@@ -8,7 +8,7 @@ import Tag, { ITagDoc } from "@/database/tag.model";
 
 import action from "../handlers/action";
 import handleError from "../handlers/error";
-import Tags from "../../app/(root)/tags/page";
+
 import {
   AskQuestionSchema,
   EditQuestionSchema,
@@ -55,7 +55,6 @@ export async function createQuestion(
         { $setOnInsert: { name: tag }, $inc: { question: 1 } }, //$setOnInsert - yangi tag yaratilganda name maydonini o'rnatadi,$inc - mavjud tag bo'lsa, uning questions maydonini 1 ga oshiradi
         { upsert: true, new: true, session } //upsert: agar mos keladigan hujjat topilmasa, yangi hujjat yaratadi,new: yangilangan yoki kiritilgan hujjatni qaytaradi
       );
-      console.log('Updated tag for', tag, ':', existingTag);
       tagIds.push(existingTag._id); //tagIds massiviga tag ning _id sini qo'shamiz
       tagQuestionDocuments.push({
         tag: existingTag._id,
@@ -71,7 +70,6 @@ export async function createQuestion(
       { $push: { tags: { $each: tagIds } } }, //tags maydoniga barcha tagIds ni qo'shamiz
       { session } //transaction session ni o'tkazamiz
     );
-    console.log('Transaction committed successfully');
     await session.commitTransaction();
 
     return { success: true, data: JSON.parse(JSON.stringify(question)) }; //question obyektini JSON ga aylantirib frontendga qaytaradi
@@ -104,7 +102,6 @@ export async function editQuestion(
 
   try {
     const question = await Question.findById(questionId).populate("tags");
-    console.log(question, "questions");
     if (!question) throw new Error("Question not found");
 
     if (question.author.toString() !== userId) {
@@ -124,7 +121,6 @@ export async function editQuestion(
           t.name.toLowerCase().includes(tag.toLowerCase())
         )
     );
-    console.log(tags, "tags");
 
     const tagsToRemove = question.tags.filter(
       (tag: ITagDoc) =>
@@ -141,13 +137,15 @@ export async function editQuestion(
           { $setOnInsert: { name: tag }, $inc: { question: 1 } },
           { upsert: true, new: true, session }
         );
-        console.log('Updated tag for', tag, ':', newTag);
+
         if (newTag) {
-          newTagDocuments.push({ tag: newTag._id, question: questionId });
+          newTagDocuments.push({
+            tag: newTag._id,
+            question: questionId,
+          });
           question.tags.push(newTag._id);
         }
       }
-      console.log(question.tags, "question tags");
     }
 
     // Remove tags
@@ -198,7 +196,7 @@ export async function getQuestion(
   const validationResult = await action({
     params,
     schema: GetQuestionSchema,
-    // authorize: true,
+    authorize: true,
   });
 
   if (validationResult instanceof Error) {
@@ -211,7 +209,6 @@ export async function getQuestion(
     const question = await Question.findById(questionId)
       .populate("tags", "_id name")
       .populate("author", "_id name image");
-    console.log(question, "data");
 
     if (!question) {
       throw new Error("Question not found");
@@ -269,7 +266,7 @@ export async function getQuestions(
   let sortCriteria = {};
 
   switch (
-  filter //filter ga qarab saralash mezonlarini belgilaydi
+    filter //filter ga qarab saralash mezonlarini belgilaydi
   ) {
     case "newest":
       sortCriteria = { createdAt: -1 }; //-1 bu kamayish tartibini bildiradi, ya'ni yangi yaratilganlar birinchi bo'ladi

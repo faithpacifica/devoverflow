@@ -8,7 +8,11 @@ Code.theme = {
 };
 
 export const Preview = ({ content }: { content: string }) => {
-  const formattedContent = content.replace(/\\/g, "").replace(/&#x20;/g, "");
+  const formattedContent = content
+    .replace(/\\/g, "")
+    .replace(/&#x20;/g, "")
+    .replace(/{/g, "\\{")
+    .replace(/}/g, "\\}");
 
   return (
     <section className="markdown prose grid break-words">

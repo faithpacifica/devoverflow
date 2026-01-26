@@ -47,7 +47,7 @@ body {
 
   --breakpoint-xs: 420px;
 
-/* Fonts */
+  /* Fonts */
   --font-inter: var(--font-inter);
   --font-space-grotesk: var(--font-space-grotesk);
 }
@@ -60,7 +60,6 @@ body {
 
 /* *************************** */
 @layer utilities {
-
   .background-light850_dark100 {
     background-color: theme("colors.light.850");
   }
@@ -523,7 +522,9 @@ body {
   .markdown {
     max-width: 100%;
   }
-
+  .markdown p ,.markdown ul, .markdown ol{
+    margin: 2px;
+  }
   .markdown :where(h1, h2, h3, h4, h5, h6) {
     color: theme("colors.dark.400");
   }
