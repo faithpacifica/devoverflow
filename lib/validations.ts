@@ -68,7 +68,7 @@ export const AskQuestionSchema = z.object({
     .max(3, { message: "Maximum of 3 tags." }),
 });
 
-//frontend validation for Users 
+//frontend validation for Users
 export const UserSchema = z.object({
   name: z.string().min(1, "Name is required"),
   username: z.string().min(3, "Username must be at least 3 characters"),
@@ -105,9 +105,8 @@ export const AccountSchema = z.object({
     .min(1, { message: "Provider Account ID is required." }),
 });
 
-
 export const SignInWithOAuthSchema = z.object({
-  provider: z.enum(["github", "google"]), 
+  provider: z.enum(["github", "google"]),
   providerAccountId: z.string().min(1, "Provider account ID is required"),
   user: z.object({
     name: z.string().min(1, "Name is required"),
@@ -135,4 +134,8 @@ export const PaginatedSearchParamsSchema = z.object({
 
 export const GetTagQuestionsSchema = PaginatedSearchParamsSchema.extend({
   tagId: z.string().min(1, "Tag ID is required"),
+});
+
+export const IncrementViewsSchema = z.object({
+  questionId: z.string().min(1, { message: "Question ID is required" }),
 });
