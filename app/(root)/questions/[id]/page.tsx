@@ -8,28 +8,32 @@ import Link from "next/link";
 import React from "react";
 import { getQuestion, incrementViews } from "@/lib/actions/question.action";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 // import View from "../view";
 
 const QuestionDetails = async ({ params }: RouteParams) => {
   const { id } = await params;
-  
-  //parallen request when one doesn't depend on the other
-  const [_, { success, data: question }] = await Promise.all([ //_ is used to ignore the first promise result, which is the result of incrementViews, because we don't need to use it in this component. We only care about the result of getQuestion, which is the second promise.
-    await incrementViews({ questionId: id }), // bu yerda view increment qilishni alohida qilamiz, chunki bu har doim bo'lishi kerak va foydalanuvchi sahifani har safar ochganda view soni oshishi kerak.
-    await getQuestion({ questionId: id }), // bu yerda esa question ma'lumotlarini olishni alohida qilamiz, chunki bu ma'lumotlar sahifada ko'rsatiladi va foydalanuvchi uchun kerak bo'ladi.
-  ]);
+  const { success, data: question } = await getQuestion({ questionId: id }); 
 
-  // Fetch real data
+  after(async () => { // VIEW COUNT qilishni 3- usuli va optimal usuli, chunki bu usulda view increment qilishni question ma'lumotlarini olib, UI render qilingandan keyin qilamiz, shuning uchun agar question ma'lumotlarini olishda xatolik yuz bersa, view increment qilishni amalga oshirmaymiz, bu esa noto'g'ri view sonini oldini oladi.
+    await incrementViews({ questionId: id });
+  });
+
+  // VIEW COUNT qilishni 2- usuli
+  // parallel request when one doesn't depend on the other
+  // const [_, { success, data: question }] = await Promise.all([ //_ is used to ignore the first promise result, which is the result of incrementViews, because we don't need to use it in this component. We only care about the result of getQuestion, which is the second promise.
+  // await incrementViews({ questionId: id }), // bu yerda view increment qilishni alohida qilamiz, chunki bu har doim bo'lishi kerak va foydalanuvchi sahifani har safar ochganda view soni oshishi kerak.
+  // await getQuestion({ questionId: id }), // bu yerda esa question ma'lumotlarini olishni alohida qilamiz, chunki bu ma'lumotlar sahifada ko'rsatiladi va foydalanuvchi uchun kerak bo'ladi.
+  // ]);
 
   if (!success || !question) {
     return redirect("/404");
   }
+  // Fetch real data
   const { author, createdAt, answers, views, tags, content, title } = question;
 
   return (
     <>
-      {/* <View questionId={id}/> */}
-
       <div className="flex-start w-full flex-col">
         <div className="flex w-full flex-col-reverse justify-between">
           <div className="flex items-center justify-start gap-1">
