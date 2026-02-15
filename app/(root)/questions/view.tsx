@@ -1,26 +1,26 @@
-"use client";
+// "use client";
 
-import { toast } from "sonner"
-import { incrementViews } from "@/lib/actions/question.action";
-import { useEffect } from "react";
+// import { toast } from "sonner"
+// import { incrementViews } from "@/lib/actions/question.action";
+// import { useEffect } from "react";
 
-const View = ({ questionId }: { questionId: string }) => {
-  const handleIncrement = async () => {
-    const result = await incrementViews({ questionId });
+// const View = ({ questionId }: { questionId: string }) => {
+//   const handleIncrement = async () => {
+//     const result = await incrementViews({ questionId });
 
-    if (result?.success) {
-      toast.success("Views incremented")
+//     if (result?.success) {
+//       toast.success("Views incremented")
   
-    } else {
-      toast.error( result.error?.message);
-    }
-  };
+//     } else {
+//       toast.error( result.error?.message);
+//     }
+//   };
 
-  useEffect(() => {
-    handleIncrement();
-  }, []);
+//   useEffect(() => {
+//     handleIncrement();
+//   }, []);
 
-  return null;
-};
+//   return null;
+// };
 
-export default View;
+// export default View;

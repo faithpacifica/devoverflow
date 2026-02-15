@@ -6,15 +6,20 @@ import ROUTES from "@/constants/routes";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
 import Link from "next/link";
 import React from "react";
-import { getQuestion } from "@/lib/actions/question.action";
+import { getQuestion, incrementViews } from "@/lib/actions/question.action";
 import { redirect } from "next/navigation";
-import View from "../view";
+// import View from "../view";
 
 const QuestionDetails = async ({ params }: RouteParams) => {
   const { id } = await params;
+  
+  //parallen request when one doesn't depend on the other
+  const [_, { success, data: question }] = await Promise.all([ //_ is used to ignore the first promise result, which is the result of incrementViews, because we don't need to use it in this component. We only care about the result of getQuestion, which is the second promise.
+    await incrementViews({ questionId: id }), // bu yerda view increment qilishni alohida qilamiz, chunki bu har doim bo'lishi kerak va foydalanuvchi sahifani har safar ochganda view soni oshishi kerak.
+    await getQuestion({ questionId: id }), // bu yerda esa question ma'lumotlarini olishni alohida qilamiz, chunki bu ma'lumotlar sahifada ko'rsatiladi va foydalanuvchi uchun kerak bo'ladi.
+  ]);
 
   // Fetch real data
-  const { success, data: question } = await getQuestion({ questionId: id });
 
   if (!success || !question) {
     return redirect("/404");
@@ -23,7 +28,8 @@ const QuestionDetails = async ({ params }: RouteParams) => {
 
   return (
     <>
-    <View questionId={id}/>
+      {/* <View questionId={id}/> */}
+
       <div className="flex-start w-full flex-col">
         <div className="flex w-full flex-col-reverse justify-between">
           <div className="flex items-center justify-start gap-1">
@@ -74,7 +80,7 @@ const QuestionDetails = async ({ params }: RouteParams) => {
         />
       </div>
 
-        <Preview content={content} />
+      <Preview content={content} />
 
       <div className="mt-8 flex flex-wrap gap-2">
         {tags.map((tag: Tag) => (
