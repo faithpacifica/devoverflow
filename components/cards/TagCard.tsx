@@ -29,7 +29,7 @@ const TagCard = ({
 }: Props) => {
   const iconClass = getDeviconClassName(name);
   const iconDescription = getTechDescription(name);
-console.log(question, 'questions')
+// console.log(question, 'questions')
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
   };
