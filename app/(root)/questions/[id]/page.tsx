@@ -9,6 +9,7 @@ import React from "react";
 import { getQuestion, incrementViews } from "@/lib/actions/question.action";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
+import AnswerForm from "@/components/forms/AnswerForm";
 // import View from "../view";
 
 const QuestionDetails = async ({ params }: RouteParams) => {
@@ -96,6 +97,10 @@ const QuestionDetails = async ({ params }: RouteParams) => {
           />
         ))}
       </div>
+
+      <section className="my-5">
+        <AnswerForm />
+      </section>
     </>
   );
 };
