@@ -10,13 +10,15 @@ import { getQuestion, incrementViews } from "@/lib/actions/question.action";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
 import AnswerForm from "@/components/forms/AnswerForm";
+import { getAnswers } from "@/lib/actions/answer.action";
 // import View from "../view";
 
 const QuestionDetails = async ({ params }: RouteParams) => {
   const { id } = await params;
-  const { success, data: question } = await getQuestion({ questionId: id }); 
+  const { success, data: question } = await getQuestion({ questionId: id });
 
-  after(async () => { // VIEW COUNT qilishni 3- usuli va optimal usuli, chunki bu usulda view increment qilishni question ma'lumotlarini olib, UI render qilingandan keyin qilamiz, shuning uchun agar question ma'lumotlarini olishda xatolik yuz bersa, view increment qilishni amalga oshirmaymiz, bu esa noto'g'ri view sonini oldini oladi.
+  after(async () => {
+    // VIEW COUNT qilishni 3- usuli va optimal usuli, chunki bu usulda view increment qilishni question ma'lumotlarini olib, UI render qilingandan keyin qilamiz, shuning uchun agar question ma'lumotlarini olishda xatolik yuz bersa, view increment qilishni amalga oshirmaymiz, bu esa noto'g'ri view sonini oldini oladi.
     await incrementViews({ questionId: id });
   });
 
@@ -30,6 +32,21 @@ const QuestionDetails = async ({ params }: RouteParams) => {
   if (!success || !question) {
     return redirect("/404");
   }
+
+  // fetch answers
+  const {
+    success: areAnswersLoaded,
+    data: answersResult,
+    error: answersError,
+  } = await getAnswers({
+    questionId: id,
+    page: 1,
+    pageSize: 10,
+    filter: "latest",
+  });
+
+  console.log("ANSWERS", answersResult)
+
   // Fetch real data
   const { author, createdAt, answers, views, tags, content, title } = question;
 
@@ -99,7 +116,7 @@ const QuestionDetails = async ({ params }: RouteParams) => {
       </div>
 
       <section className="my-5">
-        <AnswerForm questionId = {question._id} />
+        <AnswerForm questionId={question._id} />
       </section>
     </>
   );
