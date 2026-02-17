@@ -110,7 +110,7 @@ const AnswerForm = ({ questionId }: { questionId: string }) => {
           />
 
           <div className="flex justify-end">
-            <Button type="submit" className="primary-gradient w-fit">
+            <Button type="submit" className="primary-gradient w-fit cursor-pointer">
               {isAnswering ? (
                 <>
                   <ReloadIcon className="mr-2 size-4 animate-spin" />

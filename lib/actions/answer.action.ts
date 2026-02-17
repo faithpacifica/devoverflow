@@ -54,7 +54,7 @@ export async function createAnswer(
     await session.commitTransaction();
 
     revalidatePath(ROUTES.QUESTION(questionId));
-
+// TODO:answer yaratilganidan keyin uni tozalash 
     return {
       success: true,
       data: JSON.parse(JSON.stringify(newAnswer)),

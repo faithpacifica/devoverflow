@@ -6,7 +6,7 @@ import { DEFAULT_EMPTY, DEFAULT_ERROR } from "@/constants/states";
 
 import { Button } from "./ui/button";
 
-interface Props<T> { //it its type safe when we pass different types of data and we dont know what type of data will be passed
+interface Props<T> { // T is type safe when we pass different types of data and we dont know what type of data will be passed
   success: boolean;
   error?: {
     message: string;
