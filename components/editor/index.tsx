@@ -40,7 +40,7 @@ interface Props {
 }
 
 const Editor = ({ value, fieldChange, editorRef }: Props) => {
-  const { resolvedTheme } = useTheme;
+  const { resolvedTheme } = useTheme();
 
   const themeExtension = resolvedTheme === "dark" ? [basicDark] : [];
 
@@ -60,20 +60,28 @@ const Editor = ({ value, fieldChange, editorRef }: Props) => {
         markdownShortcutPlugin(),
         tablePlugin(),
         imagePlugin(),
-        codeBlockPlugin({ defaultCodeBlockLanguage: "" }),
+        codeBlockPlugin({ defaultCodeBlockLanguage: "plaintext" }),
         codeMirrorPlugin({
           codeBlockLanguages: {
-            css: "css",
-            txt: "txt",
-            sql: "sql",
-            html: "html",
-            sass: "sass",
-            scss: "scss",
-            bash: "bash",
-            json: "json",
-            js: "javascript",
-            ts: "typescript",
-            "": "unspecified",
+            plaintext: "Plain Text",
+            txt: "Plain Text",
+
+            js: "JavaScript",
+            javascript: "JavaScript",
+
+            ts: "TypeScript",
+            typescript: "TypeScript",
+
+            py: "Python",
+            python: "Python",
+
+            html: "HTML",
+            css: "CSS",
+            json: "JSON",
+            bash: "Bash",
+            shell: "Shell",
+            sql: "SQL",
+
             tsx: "TypeScript (React)",
             jsx: "JavaScript (React)",
           },
