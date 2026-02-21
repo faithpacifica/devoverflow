@@ -1,6 +1,5 @@
 "use client";
 
-import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import Link from "next/link";
 import {
   DefaultValues,
@@ -41,6 +40,7 @@ const AuthForm = <T extends FieldValues>({
   const router = useRouter();
 
   const form = useForm<z.infer<typeof schema>>({
+    // TODO:hal qilish
     resolver: zodResolver(schema),
     defaultValues: defaultValues as DefaultValues<T>,
   });

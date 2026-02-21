@@ -1,3 +1,5 @@
+'use server';
+
 import TagCard from "@/components/cards/TagCard";
 import { Preview } from "@/components/editor/Preview";
 import Metric from "@/components/Metric";
@@ -12,7 +14,7 @@ import { after } from "next/server";
 import AnswerForm from "@/components/forms/AnswerForm";
 import { getAnswers } from "@/lib/actions/answer.action";
 import AllAnswers from "@/components/answers/AllAnswers";
-// import View from "../view";
+import Votes from "@/components/votes/Votes";
 
 const QuestionDetails = async ({ params }: RouteParams) => {
   const { id } = await params;
@@ -70,7 +72,12 @@ const QuestionDetails = async ({ params }: RouteParams) => {
           </div>
 
           <div className="flex justify-end">
-            <p>Votes</p>
+            <Votes
+              upvotes={question.upvotes}
+              downvotes={question.downvotes}
+              hasupVoted={true}
+              hasdownVoted={false}
+            />
           </div>
         </div>
 
@@ -125,7 +132,11 @@ const QuestionDetails = async ({ params }: RouteParams) => {
         />
       </section>
 
-      <AnswerForm questionId={question._id} questionTitle={question.title} questionContent ={question.content}/>
+      <AnswerForm
+        questionId={question._id}
+        questionTitle={question.title}
+        questionContent={question.content}
+      />
     </>
   );
 };

@@ -17,6 +17,7 @@ interface Question {
   tags: Tag[];
   createdAt: Date;
   upvotes: number;
+  downvotes: number;
   answers: number;
   views: number;
 }
