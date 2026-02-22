@@ -49,17 +49,14 @@ const Votes = ({ upvotes, downvotes, hasupVoted, hasdownVoted }: Props) => {
           className={`cursor-pointer ${isLoading && "opacity-50"}`}
           aria-label="Upvote"
           onClick={() => !isLoading && handleVote("upvote")}
-        />{" "}
+        />
         <div className="flex-center background-light700_dark400 min-w-5 rounded-sm p-1">
-          {" "}
           <p className="subtle-medium text-dark400_light900">
-            {" "}
             {formatNumber(upvotes)}{" "}
-          </p>{" "}
-        </div>{" "}
-      </div>{" "}
+          </p>
+        </div>
+      </div>
       <div className="flex-center gap-1.5">
-        {" "}
         <Image
           src={hasdownVoted ? "/icons/downvoted.svg" : "/icons/downvote.svg"}
           width={18}
@@ -68,15 +65,13 @@ const Votes = ({ upvotes, downvotes, hasupVoted, hasdownVoted }: Props) => {
           className={`cursor-pointer ${isLoading && "opacity-50"}`}
           aria-label="Downvote"
           onClick={() => !isLoading && handleVote("downvote")}
-        />{" "}
+        />
         <div className="flex-center background-light700_dark400 min-w-5 rounded-sm p-1">
-          {" "}
           <p className="subtle-medium text-dark400_light900">
-            {" "}
-            {formatNumber(downvotes)}{" "}
-          </p>{" "}
-        </div>{" "}
-      </div>{" "}
+            {formatNumber(downvotes)}
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
