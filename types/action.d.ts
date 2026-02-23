@@ -1,3 +1,4 @@
+import { hasVotedSchema } from '../lib/validations';
 interface SignInWithOAuthParams {
   provider: "github" | "google";
   providerAccountId: string;
@@ -46,11 +47,18 @@ interface GetAnswersParams extends PaginatedSearchParams {
   questionId:string;
 }
 interface CreateVoteParams {
-  targetId: string;
+  targetId: string; // ID of the question or answer being voted on
   targetType: "question" | "answer";
   voteType: "upvote" | "downvote";
 }
 
 interface UpdateVoteCountParams extends CreateVoteParams {
   change: 1 | -1;
+}
+
+type HasVotedParams = Pick.<CreateVoteParams, "targetId" | "targetType">;
+
+interface hasVotedResponse{
+  hasUpvoted: boolean;
+  hasDownvoted: boolean;
 }

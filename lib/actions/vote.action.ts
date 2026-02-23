@@ -1,11 +1,15 @@
+"use server";
+
 import mongoose, { ClientSession } from "mongoose";
 import { Answer, Question, Vote } from "@/database";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
-import { CreateVoteSchema, UpdateVoteCountSchema } from "../validations";
+import { CreateVoteSchema, hasVotedSchema, UpdateVoteCountSchema } from "../validations";
+import { CreateVoteParams, HasVotedParams, hasVotedResponse, UpdateVoteCountParams } from "@/types/action";
+
 export async function updateVoteCount(
   params: UpdateVoteCountParams,
-  session?: ClientSession
+  session?: ClientSession //ClientSession param added to ensure atomicity when updating vote counts
 ): Promise<ActionResponse> {
   const validationResult = await action({
     params,
@@ -18,10 +22,11 @@ export async function updateVoteCount(
   const Model = targetType === "question" ? Question : Answer;
   const voteField = voteType === "upvote" ? "upvotes" : "downvotes";
   try {
+    //update the vote count atomically using the session
     const result = await Model.findByIdAndUpdate(
-      targetId,
-      { $inc: { [voteField]: change } },
-      { new: true, session }
+      targetId, //<-questionID or answerID
+      { $inc: { [voteField]: change } }, //dinamically change the field to update based on voteType
+      { new: true, session } //something goes wrong here, check the session part, it should be passed from the createVote function to ensure atomicity
     );
     if (!result)
       return handleError(
@@ -32,6 +37,7 @@ export async function updateVoteCount(
     return handleError(error) as ErrorResponse;
   }
 }
+
 export async function createVote(
   params: CreateVoteParams
 ): Promise<ActionResponse> {
@@ -45,9 +51,17 @@ export async function createVote(
   }
   const { targetId, targetType, voteType } = validationResult.params!;
   const userId = validationResult.session?.user?.id;
+  console.log(
+    userId,
+    targetId,
+    targetType,
+    voteType,
+    "-userzid, targetId,targetType,voteType"
+  );
   if (!userId) handleError(new Error("Unauthorized")) as ErrorResponse;
   const session = await mongoose.startSession();
   session.startTransaction();
+
   try {
     const existingVote = await Vote.findOne({
       author: userId,
@@ -90,6 +104,48 @@ export async function createVote(
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
+    return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function hasVoted(
+  params: HasVotedParams
+): Promise<ActionResponse<hasVotedResponse>> {
+  const validationResult = await action({
+    params,
+    schema: hasVotedSchema,
+    authorize: true,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { targetId, targetType } = validationResult.params!;
+  const userId = validationResult.session?.user?.id;
+
+  try {
+    const vote = await Vote.findOne({
+      author: userId,
+      actionId: targetId,
+      actionType: targetType,
+    });
+
+    if (!vote) {
+      return {
+        success: false,
+        data: { hasUpvoted: false, hasDownvoted: false },
+      };
+    }
+
+    return {
+      success: true,
+      data: {
+        hasUpvoted: vote.voteType === "upvote",
+        hasDownvoted: vote.voteType === "downvote",
+      },
+    };
+  } catch (error) {
     return handleError(error) as ErrorResponse;
   }
 }

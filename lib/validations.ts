@@ -155,10 +155,13 @@ export const GetAnswersSchema = PaginatedSearchParamsSchema.extend({
 });
 
 export const AIAnswerSchema = z.object({
-  question: z.string()
-  .min(5, { message: "Question is required." })
-  .max(130,{ message: "Question mustn't be longer then 130 characters." }),
-  content: z.string().min(10, { message: "Answer must be at least 100 characters long." }),
+  question: z
+    .string()
+    .min(5, { message: "Question is required." })
+    .max(130, { message: "Question mustn't be longer then 130 characters." }),
+  content: z
+    .string()
+    .min(10, { message: "Answer must be at least 100 characters long." }),
   userAnswer: z.string().optional(),
 });
 
@@ -174,3 +177,7 @@ export const UpdateVoteCountSchema = CreateVoteSchema.extend({
   change: z.number().int().min(-1).max(1),
 });
 
+export const hasVotedSchema = CreateVoteSchema.pick({
+  targetId: true,
+  targetType: true,
+})
