@@ -4,8 +4,19 @@ import mongoose, { ClientSession } from "mongoose";
 import { Answer, Question, Vote } from "@/database";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
-import { CreateVoteSchema, hasVotedSchema, UpdateVoteCountSchema } from "../validations";
-import { CreateVoteParams, HasVotedParams, hasVotedResponse, UpdateVoteCountParams } from "@/types/action";
+import {
+  CreateVoteSchema,
+  hasVotedSchema,
+  UpdateVoteCountSchema,
+} from "../validations";
+import {
+  CreateVoteParams,
+  HasVotedParams,
+  hasVotedResponse,
+  UpdateVoteCountParams,
+} from "@/types/action";
+import { revalidatePath } from "next/cache";
+import ROUTES from "@/constants/routes";
 
 export async function updateVoteCount(
   params: UpdateVoteCountParams,
@@ -68,6 +79,16 @@ export async function createVote(
       actionId: targetId,
       actionType: targetType,
     }).session(session);
+
+    console.log(
+      userId,
+      targetId,
+      targetType,
+      voteType,
+      "-userzid, targetId,targetType,voteType"
+    );
+    console.log(existingVote);
+
     if (existingVote) {
       if (existingVote.voteType === voteType) {
         // If the user has already voted with the same voteType, remove the vote
@@ -90,9 +111,19 @@ export async function createVote(
       }
     } else {
       // If the user has not voted yet, create a new vote
-      await Vote.create([{ targetId, targetType, voteType, change: 1 }], {
-        session,
-      });
+      await Vote.create(
+        [
+          {
+            author: userId,
+            actionId: targetId,
+            actionType: targetType,
+            voteType,
+          },
+        ],
+        {
+          session,
+        }
+      );
       await updateVoteCount(
         { targetId, targetType, voteType, change: 1 },
         session
@@ -100,6 +131,10 @@ export async function createVote(
     }
     await session.commitTransaction();
     session.endSession();
+
+    // result has happen instantly when user clicks the button, but the real data will be updated after the transaction is commited, so we need to revalidate the path to fetch the real data and update the UI accordingly
+    revalidatePath(ROUTES.QUESTION(targetId));
+
     return { success: true };
   } catch (error) {
     await session.abortTransaction();
