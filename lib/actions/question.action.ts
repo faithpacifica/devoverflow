@@ -16,6 +16,7 @@ import {
   IncrementViewsSchema,
   PaginatedSearchParamsSchema,
 } from "../validations";
+import { CreateQuestionParams, EditQuestionParams, GetQuestionParams, IncrementViewParams } from "@/types/action";
 // import { revalidatePath } from "next/cache";
 // import ROUTES from "@/constants/routes";
 
