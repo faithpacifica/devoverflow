@@ -8,7 +8,7 @@ import LocalSearch from "@/components/search/LocalSearch";
 import { CollectionFilters } from "@/constants/filters";
 import ROUTES from "@/constants/routes";
 import { EMPTY_COLLECTIONS } from "@/constants/states";
-import { getSavedQuestions } from "@/lib/actions/";
+import { getSavedQuestions } from "@/lib/actions/collection.action";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 
