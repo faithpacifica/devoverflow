@@ -4,12 +4,15 @@ import { revalidatePath } from "next/cache";
 
 import ROUTES from "@/constants/routes";
 import { Collection, Question } from "@/database";
-
+import mongoose from "mongoose";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
-import { CollectionBaseSchema, PaginatedSearchParamsSchema } from "../validations";
+import {
+  CollectionBaseSchema,
+  PaginatedSearchParamsSchema,
+} from "../validations";
 import { CollectionBaseParams } from "@/types/action";
-import { FilterQuery, PipelineStage, Types } from 'mongoose';
+import { PipelineStage } from "mongoose";
 
 export async function toggleSaveQuestion(
   params: CollectionBaseParams
@@ -100,8 +103,6 @@ export async function hasSavedQuestion(
   }
 }
 
-//TODO:Get all Saved questions action ni boshqatdan kurish
-
 export async function getSavedQuestions(
   params: PaginatedSearchParams
 ): Promise<ActionResponse<{ collection: Collection[]; isNext: boolean }>> {
@@ -185,7 +186,9 @@ export async function getSavedQuestions(
 
     const questions = await Collection.aggregate(pipeline);
 
-    const isNext = totalCount.count > skip + questions.length;
+    const count = totalCount?.count || 0;
+    const isNext = count > skip + questions.length;
+    // const isNext = totalCount.count > skip + questions.length;
 
     return {
       success: true,
