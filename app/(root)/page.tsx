@@ -1,8 +1,10 @@
 import QuestionCard from "@/components/cards/QuestionCard";
 import DataRenderer from "@/components/DataRenderer";
+import CommonFilter from "@/components/filters/CommonFilter";
 import HomeFilter from "@/components/filters/HomeFilter";
 import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
+import { HomePageFilters } from "@/constants/filters";
 import ROUTES from "@/constants/routes";
 import { EMPTY_QUESTION } from "@/constants/states";
 import { getQuestions } from "@/lib/actions/question.action";
@@ -43,6 +45,11 @@ const Home = async ({ searchParams }: SearchParams) => {
         />
       </section>
 
+      <CommonFilter
+        filters={HomePageFilters}
+        otherClasses="min-h-[56px] sm:min-w-[170px]"
+        containerClasses="hidden max-md:flex"
+      />
       <HomeFilter />
 
       <DataRenderer
@@ -58,7 +65,7 @@ const Home = async ({ searchParams }: SearchParams) => {
           </div>
         )}
       />
-      
+
       {/* {success ? (
         <div className="mt-10 flex w-full flex-col gap-6">
           {questions && questions.length > 0 ? (
