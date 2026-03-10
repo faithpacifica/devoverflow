@@ -5,7 +5,7 @@ import ROUTES from "@/constants/routes";
 import { getTimeStamp } from "@/lib/utils";
 
 import TagCard from "./TagCard";
-import Metric from "../Metric";
+import Metric from "../votes/Metric";
 
 interface Props {
   question: Question;

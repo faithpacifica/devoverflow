@@ -36,8 +36,9 @@ const SaveQuestion = ({
       if (!success) throw new Error(error?.message || "An error occurred");
 
       toast.success(
-        `Question ${data?.saved} ? "saved" : "unsaved" successfully`
+        `Question ${data?.saved ? "saved" : "unsaved"} successfully`
       );
+      
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "An error occured");
     } finally {

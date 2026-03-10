@@ -1,8 +1,8 @@
-'use server';
+"use server";
 
 import TagCard from "@/components/cards/TagCard";
 import { Preview } from "@/components/editor/Preview";
-import Metric from "@/components/Metric";
+import Metric from "@/components/votes/Metric";
 import UserAvatar from "@/components/UserAvatar";
 import ROUTES from "@/constants/routes";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
@@ -19,9 +19,9 @@ import { hasVoted } from "@/lib/actions/vote.action";
 import SaveQuestion from "@/components/questions/SaveQuestion";
 import { hasSavedQuestion } from "@/lib/actions/collection.action";
 
-const QuestionDetails = async ({ params,searchParams }: RouteParams) => {
+const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
   const { id } = await params;
-  const {page, pageSize, filter} = await searchParams
+  const { page, pageSize, filter } = await searchParams;
   const { success, data: question } = await getQuestion({ questionId: id });
 
   after(async () => {
@@ -57,10 +57,10 @@ const QuestionDetails = async ({ params,searchParams }: RouteParams) => {
   const hasVotedPromise = hasVoted({
     targetId: question._id,
     targetType: "question",
-  })
-const hasSavedQuestionPromise = hasSavedQuestion({
-  questionId:question._id
-})
+  });
+  const hasSavedQuestionPromise = hasSavedQuestion({
+    questionId: question._id,
+  });
 
   // Fetch real data
   const { author, createdAt, answers, views, tags, content, title } = question;
@@ -147,6 +147,8 @@ const hasSavedQuestionPromise = hasSavedQuestion({
 
       <section className="my-5">
         <AllAnswers
+        page={Number(page) || 1}
+        isNext ={answersResult?.isNext || 1}
           data={answersResult?.answers}
           success={areAnswersLoaded}
           error={answersError}
