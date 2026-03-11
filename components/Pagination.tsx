@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { formUrlQuery } from "@/lib/url";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"; 
 
 import { Button } from "./ui/button";
 
@@ -22,7 +22,7 @@ const Pagination = ({ page = 1, isNext, containerClasses }: Props) => {
       type === "prev" ? Number(page) - 1 : Number(page) + 1;
 
     const newUrl = formUrlQuery({
-      params: searchParams.toString(),
+      params: searchParams.toString(), 
       key: "page",
       value: nextPageNumber.toString(),
     });

@@ -22,7 +22,7 @@ const Home = async ({ searchParams }: SearchParams) => {
     query: query || "",
     filter: filter || "",
   });
-  const { questions,isNext } = data || {};
+  const { questions, isNext } = data || {};
 
   return (
     <>
@@ -66,7 +66,7 @@ const Home = async ({ searchParams }: SearchParams) => {
           </div>
         )}
       />
-<Pagination page={page} isNext={isNext || false}/>
+      <Pagination page={page} isNext={isNext || false} />
       {/* {success ? (
         <div className="mt-10 flex w-full flex-col gap-6">
           {questions && questions.length > 0 ? (
@@ -86,7 +86,6 @@ const Home = async ({ searchParams }: SearchParams) => {
           </p>
         </div>
       )} */}
-
     </>
   );
 };
