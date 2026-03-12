@@ -9,7 +9,7 @@ import Image from "next/image";
 interface Props {
   _id: string;
   name: string;
-  question?: number;
+  questions?: number;
   showCount?: boolean;
   compact?: boolean;
   isButton?: boolean;
@@ -20,7 +20,7 @@ interface Props {
 const TagCard = ({
   _id,
   name,
-  question,
+  questions,
   showCount,
   compact,
   isButton,
@@ -55,7 +55,7 @@ const TagCard = ({
       </Badge>
 
       {showCount && (
-        <p className="small-medium text-dark500_light700">{question}</p>
+        <p className="small-medium text-dark500_light700">{questions}</p>
       )}
     </>
   );
@@ -89,7 +89,7 @@ const TagCard = ({
         <p className="small-medium text-dark400_light500 mt-3.5">
           {/* TODO:question 0 kevoti, datani tekshirish */}
           <span className="body-semibold primary-text-gradient mr-2.5">
-            {question}+ 
+            {questions}+ 
           </span>
           Questions
         </p>
