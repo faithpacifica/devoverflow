@@ -1,17 +1,19 @@
 "use server";
 
-import  {FilterQuery} from 'mongoose'; //TODO:FilterQuery ni hal qilish
+import { FilterQuery } from "mongoose"; //TODO:FilterQuery ni hal qilish
 
-import { User } from "@/database";
+import { Answer, Question, User } from "@/database";
 
 import action from "../handlers/action";
 import handleError from "../handlers/error";
-import { PaginatedSearchParamsSchema } from "../validations";
+import { GetUserSchema, PaginatedSearchParamsSchema } from "../validations";
+import { GetUserParams } from "@/types/action";
 
 export async function getUsers(
   params: PaginatedSearchParams
 ): Promise<ActionResponse<{ users: User[]; isNext: boolean }>> {
-  const validationResult = await action({ //generic action
+  const validationResult = await action({
+    //generic action
     params,
     schema: PaginatedSearchParamsSchema,
   });
@@ -25,7 +27,7 @@ export async function getUsers(
   const skip = (Number(page) - 1) * pageSize;
   const limit = pageSize;
 
-  const filterQuery: FilterQuery<typeof User> = {}; 
+  const filterQuery: FilterQuery<typeof User> = {};
 
   if (query) {
     filterQuery.$or = [
@@ -66,6 +68,45 @@ export async function getUsers(
       data: {
         users: JSON.parse(JSON.stringify(users)),
         isNext,
+      },
+    };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function getUser(params: GetUserParams): Promise<
+  ActionResponse<{
+    user: typeof User;
+    totalQuestions: number;
+    totalAnswers: number;
+  }>
+> {
+  const validationResult = await action({
+    params,
+    schema: GetUserSchema,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { userId } = params;
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) throw new Error("User not found");
+
+    const totalQuestions = await Question.countDocuments({ author: userId });
+    const totalAnswers = await Answer.countDocuments({ author: userId });
+
+    return {
+      success: true,
+      data: {
+        user: JSON.parse(JSON.stringify(user)),
+        totalQuestions,
+        totalAnswers,
       },
     };
   } catch (error) {

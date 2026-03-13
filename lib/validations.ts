@@ -180,8 +180,12 @@ export const UpdateVoteCountSchema = CreateVoteSchema.extend({
 export const hasVotedSchema = CreateVoteSchema.pick({
   targetId: true,
   targetType: true,
-})
+});
 
-export const CollectionBaseSchema= z.object({
-  questionId:z.string().min(1,{message:"Question ID is requied."})
-})
+export const CollectionBaseSchema = z.object({
+  questionId: z.string().min(1, { message: "Question ID is requied." }),
+});
+
+export const GetUserSchema = z.object({
+  userId: z.string().min(1, { message: "User ID is required." }),
+});
