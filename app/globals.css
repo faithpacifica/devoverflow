@@ -630,7 +630,7 @@ body {
 
   .tab[data-state="active"] {
     background-color: theme("colors.primary.100");
-    color: theme("colors.primary.500");
+    color: theme("color.primary.500");
   }
 
   .dark .tab {
