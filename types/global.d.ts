@@ -1,7 +1,7 @@
 interface Tag {
   _id: string;
   name: string;
-  questions?:number;
+  questions?: number;
 }
 
 interface Author {
@@ -44,9 +44,9 @@ type APIResponse<T = null> = NextResponse<SuccessResponse<T> | ErrorResponse>;
 // params: Record<string, string>;
 // searchParams ?: Record<string, string>;
 // }
-interface RouteParams{
-  params:Promise<Record<string,string>>
-  searchParams:Promise<Record<string,string>>
+interface RouteParams {
+  params: Promise<Record<string, string>>;
+  searchParams: Promise<Record<string, string>>;
 }
 
 interface PaginatedSearchParams {
@@ -67,20 +67,26 @@ interface Answer {
 }
 
 interface User {
-  _id:string;
-  name:string;
-  username:string;
-  email:string;
-  bio?:string;
-  image?:string;
-  location?:string;
-  portfolio?:string;
-  reputation?:number;
-  createdAt:Date;
+  _id: string;
+  name: string;
+  username: string;
+  email: string;
+  bio?: string;
+  image?: string;
+  location?: string;
+  portfolio?: string;
+  reputation?: number;
+  createdAt: Date;
 }
 
 interface Collection {
   _id: string;
   author: string | Author;
   question: Question;
+}
+
+interface BadgeCounts {
+  GOLD: number;
+  SILVER: number;
+  BRONZE: number;
 }
