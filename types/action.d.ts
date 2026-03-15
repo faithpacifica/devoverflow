@@ -1,12 +1,11 @@
-import { hasVotedSchema } from "../lib/validations";
 interface SignInWithOAuthParams {
   provider: "github" | "google";
   providerAccountId: string;
   user: {
-    name: string;
-    username: string;
     email: string;
+    name: string;
     image: string;
+    username: string;
   };
 }
 
@@ -26,6 +25,7 @@ interface CreateQuestionParams {
 interface EditQuestionParams extends CreateQuestionParams {
   questionId: string;
 }
+
 interface GetQuestionParams {
   questionId: string;
 }
@@ -34,7 +34,7 @@ interface GetTagQuestionsParams extends Omit<PaginatedSearchParams, "filter"> {
   tagId: string;
 }
 
-interface IncrementViewParams {
+interface IncrementViewsParams {
   questionId: string;
 }
 
@@ -46,8 +46,9 @@ interface CreateAnswerParams {
 interface GetAnswersParams extends PaginatedSearchParams {
   questionId: string;
 }
+
 interface CreateVoteParams {
-  targetId: string; // ID of the question or answer being voted on
+  targetId: string;
   targetType: "question" | "answer";
   voteType: "upvote" | "downvote";
 }
@@ -58,7 +59,7 @@ interface UpdateVoteCountParams extends CreateVoteParams {
 
 type HasVotedParams = Pick<CreateVoteParams, "targetId" | "targetType">;
 
-interface hasVotedResponse {
+interface HasVotedResponse {
   hasUpvoted: boolean;
   hasDownvoted: boolean;
 }
@@ -71,9 +72,15 @@ interface GetUserParams {
   userId: string;
 }
 
-interface GetUserQuestionParams extends Omit<
-  PaginatedSearchParams,
-  "query" | "filter" | "sort"
-> {
+interface GetUserQuestionsParams
+  extends Omit<PaginatedSearchParams, "query" | "filter" | "sort"> {
+  userId: string;
+}
+
+interface GetUserAnswersParams extends PaginatedSearchParams {
+  userId: string;
+}
+
+interface GetUserTagsParams {
   userId: string;
 }

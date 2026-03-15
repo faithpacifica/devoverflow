@@ -6,7 +6,7 @@ import action from "../handlers/action";
 import handleError from "../handlers/error";
 import {
   CreateVoteSchema,
-  hasVotedSchema,
+  HasVotedSchema,
   UpdateVoteCountSchema,
 } from "../validations";
 import {
@@ -137,7 +137,7 @@ export async function hasVoted(
 ): Promise<ActionResponse<hasVotedResponse>> {
   const validationResult = await action({
     params,
-    schema: hasVotedSchema,
+    schema: HasVotedSchema,
     authorize: true,
   });
 
