@@ -28,6 +28,9 @@ const AnswerCard = ({
   showReadMore = false,
   showActionBtns = false,
 }: Props) => {
+
+ const questionId = typeof question === "string" ? question : question?._id;
+
   const hasVotedPromise = hasVoted({
     targetId: _id,
     targetType: "answer",
@@ -36,11 +39,13 @@ const AnswerCard = ({
   console.log("answerId:", _id);
 
   return (
-    <article className={cn("light-border border-b py-10 relative", containerClasses)}>
+    <article
+      className={cn("light-border border-b py-10 relative", containerClasses)}
+    >
       <span id={`answer-${_id}`} className="hash-span" />
       {showActionBtns && (
         <div className="background-light800 flex-center absolute -right-2 -top-5 size-9 rounded-full">
-          <EditDeleteAction type="Answer" itemId="_id" />
+          <EditDeleteAction type="Answer" itemId={_id} />
         </div>
       )}
 
@@ -83,9 +88,9 @@ const AnswerCard = ({
 
       <Preview content={content} />
 
-      {showReadMore && (
+      {showReadMore && questionId && (
         <Link
-          href={`/questions/${question}#answer-${_id}`}
+          href={`/questions/${questionId}#answer-${_id}`}
           className="body-semibold relative z-10 font-space-grotesk text-primary-500"
         >
           <p className="mt-1">Read more...</p>
