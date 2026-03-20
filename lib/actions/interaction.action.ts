@@ -21,7 +21,7 @@ export async function createInteraction(
   }
 
   const {
-    action: actionType,
+    action: actionType, 
     actionId,
     actionTarget,
     authorId, // target user who owns the content (question/answer)
@@ -97,41 +97,6 @@ async function updateReputation(params: UpdateReputationParams) {
 
     return;
   }
-
-  async function updateReputation(params: UpdateReputationParams) {
-    const { interaction, session, performerId, authorId } = params;
-    const { action, actionType } = interaction;
-
-    let performerPoints = 0;
-    let authorPoints = 0;
-
-    switch (action) {
-      case "upvote":
-        performerPoints = 2;
-        authorPoints = 10;
-        break;
-      case "downvote":
-        performerPoints = -1;
-        authorPoints = -2;
-        break;
-      case "post":
-        authorPoints = actionType === "question" ? 5 : 10;
-        break;
-      case "delete":
-        authorPoints = actionType === "question" ? -5 : -10;
-        break;
-    }
-
-    if (performerId === authorId) {
-      await User.findByIdAndUpdate(
-        performerId,
-        { $inc: { reputation: authorPoints } },
-        { session }
-      );
-
-      return;
-    }
-
     await User.bulkWrite(
       [
         {
@@ -150,4 +115,3 @@ async function updateReputation(params: UpdateReputationParams) {
       { session }
     );
   }
-}
