@@ -17,10 +17,12 @@ import {
   IncrementViewsSchema,
   PaginatedSearchParamsSchema,
 } from "../validations";
-import { CreateQuestionParams, EditQuestionParams, GetQuestionParams, IncrementViewParams } from "@/types/action";
+
 import dbConnect from "../mongoose";
 import { Answer, Collection, Vote } from "@/database";
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
+import { createInteraction } from "./interaction.action";
 // import { revalidatePath } from "next/cache";
 // import ROUTES from "@/constants/routes";
 
@@ -78,6 +80,16 @@ export async function createQuestion(
       { $push: { tags: { $each: tagIds } } }, //tags maydoniga barcha tagIds ni qo'shamiz
       { session } //transaction session ni o'tkazamiz
     );
+    // log the interaction
+    after(async () => {
+      await createInteraction({
+        action: "post",
+        actionId: question._id.toString(),
+        actionTarget: "question",
+        authorId: userId as string,
+      });
+    });
+
     await session.commitTransaction();
 
     return { success: true, data: JSON.parse(JSON.stringify(question)) }; //question obyektini JSON ga aylantirib frontendga qaytaradi
@@ -124,7 +136,7 @@ export async function editQuestion(
 
     // Determine tags to add and remove
     const tagsToAdd = tags.filter(
-      (tag) =>
+      (tag:string) =>
         !question.tags.some((t: ITagDoc) =>
           t.name.toLowerCase().includes(tag.toLowerCase())
         )
@@ -318,7 +330,7 @@ export async function getQuestions(
 }
 
 export async function incrementViews(
-  params: IncrementViewParams
+  params: IncrementViewsParams
 ): Promise<ActionResponse<{ views: number }>> {
   const validationResult = await action({
     params,

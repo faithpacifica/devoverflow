@@ -1,7 +1,12 @@
 "use server";
 
 import mongoose, { ClientSession } from "mongoose";
-import { Answer, Question, Vote } from "@/database";
+import { revalidatePath } from "next/cache";
+import { after } from "next/server";
+
+import { Answer, Question } from "@/database";
+import Vote from "@/database/vote.model";
+
 import action from "../handlers/action";
 import handleError from "../handlers/error";
 import {
@@ -9,40 +14,35 @@ import {
   HasVotedSchema,
   UpdateVoteCountSchema,
 } from "../validations";
-import {
-  CreateVoteParams,
-  HasVotedParams,
-  hasVotedResponse,
-  UpdateVoteCountParams,
-} from "@/types/action";
-import { revalidatePath } from "next/cache";
-import ROUTES from "@/constants/routes";
+import { createInteraction } from "./interaction.action";
 
-export async function updateVoteCount(
+async function updateVoteCount(
   params: UpdateVoteCountParams,
-  session?: ClientSession //ClientSession param added to ensure atomicity when updating vote counts
+  session?: ClientSession
 ): Promise<ActionResponse> {
   const validationResult = await action({
     params,
     schema: UpdateVoteCountSchema,
   });
+
   if (validationResult instanceof Error) {
     return handleError(validationResult) as ErrorResponse;
   }
+
   const { targetId, targetType, voteType, change } = validationResult.params!;
+
   const Model = targetType === "question" ? Question : Answer;
   const voteField = voteType === "upvote" ? "upvotes" : "downvotes";
+
   try {
-    //update the vote count atomically using the session
     const result = await Model.findByIdAndUpdate(
-      targetId, //<-questionID or answerID
-      { $inc: { [voteField]: change } }, //dinamically change the field to update based on voteType
-      { new: true, session } //something goes wrong here, check the session part, it should be passed from the createVote function to ensure atomicity
+      targetId,
+      { $inc: { [voteField]: change } },
+      { new: true, session }
     );
-    if (!result)
-      return handleError(
-        new Error("Failed to update vote count")
-      ) as ErrorResponse;
+
+    if (!result) throw new Error("Failed to update vote count");
+
     return { success: true };
   } catch (error) {
     return handleError(error) as ErrorResponse;
@@ -57,17 +57,27 @@ export async function createVote(
     schema: CreateVoteSchema,
     authorize: true,
   });
+
   if (validationResult instanceof Error) {
     return handleError(validationResult) as ErrorResponse;
   }
+
   const { targetId, targetType, voteType } = validationResult.params!;
   const userId = validationResult.session?.user?.id;
 
   if (!userId) return handleError(new Error("Unauthorized")) as ErrorResponse;
+
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
+    const Model = targetType === "question" ? Question : Answer;
+
+    const contentDoc = await Model.findById(targetId).session(session);
+    if (!contentDoc) throw new Error("Content not found");
+
+    const contentAuthorId = contentDoc.author.toString();
+
     const existingVote = await Vote.findOne({
       author: userId,
       actionId: targetId,
@@ -76,30 +86,45 @@ export async function createVote(
 
     if (existingVote) {
       if (existingVote.voteType === voteType) {
-        // If the user has already voted with the same voteType, remove the vote
+        // If user is voting again with the same vote type, remove the vote
         await Vote.deleteOne({ _id: existingVote._id }).session(session);
         await updateVoteCount(
-          { targetId, targetType, voteType, change: -1 },
+          {
+            targetId,
+            targetType,
+            voteType,
+            change: -1,
+          },
           session
         );
       } else {
-        // If the user has already voted with a different voteType, update the vote
+        // If user is changing their vote, update voteType and adjust counts
         await Vote.findByIdAndUpdate(
           existingVote._id,
           { voteType },
           { new: true, session }
         );
         await updateVoteCount(
-          { targetId, targetType, voteType:existingVote.voteType, change: -1 },
+          {
+            targetId,
+            targetType,
+            voteType: existingVote.voteType,
+            change: -1,
+          },
           session
         );
         await updateVoteCount(
-          { targetId, targetType, voteType, change: 1 },
+          {
+            targetId,
+            targetType,
+            voteType,
+            change: 1,
+          },
           session
         );
       }
     } else {
-      // If the user has not voted yet, create a new vote
+      // First-time vote creation
       await Vote.create(
         [
           {
@@ -109,20 +134,33 @@ export async function createVote(
             voteType,
           },
         ],
-        {
-          session,
-        }
+        { session }
       );
       await updateVoteCount(
-        { targetId, targetType, voteType, change: 1 },
+        {
+          targetId,
+          targetType,
+          voteType,
+          change: 1,
+        },
         session
       );
     }
+
+    // log the interaction
+    after(async () => {
+      await createInteraction({
+        action: voteType,
+        actionId: targetId,
+        actionTarget: targetType,
+        authorId: contentAuthorId,
+      });
+    });
+
     await session.commitTransaction();
     session.endSession();
 
-    // result has happen instantly when user clicks the button, but the real data will be updated after the transaction is commited, so we need to revalidate the path to fetch the real data and update the UI accordingly
-    revalidatePath(ROUTES.QUESTION(targetId));
+    revalidatePath(`/questions/${targetId}`);
 
     return { success: true };
   } catch (error) {
@@ -134,7 +172,7 @@ export async function createVote(
 
 export async function hasVoted(
   params: HasVotedParams
-): Promise<ActionResponse<hasVotedResponse>> {
+): Promise<ActionResponse<HasVotedResponse>> {
   const validationResult = await action({
     params,
     schema: HasVotedSchema,
@@ -155,12 +193,14 @@ export async function hasVoted(
       actionType: targetType,
     });
 
-    if (!vote) {
+    if (!vote)
       return {
         success: false,
-        data: { hasUpvoted: false, hasDownvoted: false },
+        data: {
+          hasUpvoted: false,
+          hasDownvoted: false,
+        },
       };
-    }
 
     return {
       success: true,
