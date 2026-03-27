@@ -19,12 +19,69 @@ const spaceGrotesk = localFont({
   weight: "300 400 500 700",
 });
 
+// If your page content doesn’t change based on route params (like a homepage or About page), you can just export a simple metadata object in the root layout
 export const metadata: Metadata = {
   title: "Dev Overflow",
   description:
     "A community-driven platform for asking and answering programming questions. Get help, share knowledge, and collaborate with developers from around the world. Explore topics in web development, mobile app development, algorithms, data structures, and more.",
   icons: {
     icon: "/images/site-logo.svg",
+  },
+  generator: "Next.js",
+  applicationName: "Dev Overflow",
+  referrer: "origin-when-cross-origin",
+
+  keywords: [
+    "Dev Overflow",
+    "programming questions",
+    "developer Q&A",
+    "web development",
+    "JavaScript",
+    "React",
+    "Node.js",
+    "algorithms",
+    "data structures",
+    "developer community",
+  ],
+    formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+    nocache: false,
+    googleBot: {
+      index: true,
+      follow: true,
+      noimageindex: false,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  authors: [
+    { name: "Dildora Muslimova", url: "https://" },
+    { name: "DevTeam" },
+  ],
+  openGraph: {
+    title: "Dev Overflow | Ask & Answer Programming Questions",
+    description:
+      "Explore coding topics with help from the global dev community.",
+    url: "https://",
+    siteName: "Dev Overflow",
+    images: [
+      {
+        url: "/images/og-banner.png",
+        width: 1200,
+        height: 630,
+        alt: "Dev Overflow OG Banner",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
   },
 };
 
