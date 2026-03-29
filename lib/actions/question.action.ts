@@ -23,6 +23,7 @@ import { Answer, Collection, Vote } from "@/database";
 import { revalidatePath } from "next/cache";
 import { after } from "next/server";
 import { createInteraction } from "./interaction.action";
+import { cache } from "react";
 // import { revalidatePath } from "next/cache";
 // import ROUTES from "@/constants/routes";
 
@@ -209,14 +210,13 @@ export async function editQuestion(
   }
 }
 
-//get question details action whether we have edited everything correctly
-export async function getQuestion(
+
+export const getQuestion = cache(async function getQuestion(
   params: GetQuestionParams
 ): Promise<ActionResponse<Question>> {
   const validationResult = await action({
     params,
     schema: GetQuestionSchema,
-    authorize: true,
   });
 
   if (validationResult instanceof Error) {
@@ -238,7 +238,7 @@ export async function getQuestion(
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }
-}
+})
 
 // FETCH ALL THE QUESTIONS BASED ON THE SEARCH CRITERIA
 export async function getQuestions(
