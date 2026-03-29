@@ -18,6 +18,30 @@ import Votes from "@/components/votes/Votes";
 import { hasVoted } from "@/lib/actions/vote.action";
 import SaveQuestion from "@/components/questions/SaveQuestion";
 import { hasSavedQuestion } from "@/lib/actions/collection.action";
+import { Metadata } from "next";
+
+
+
+export async function generateMetadata({ params }: RouteParams) :Promise<Metadata>{
+  const { id } = await params;
+  const { success, data: question } = await getQuestion({ questionId: id });
+
+  if(!success || !question){
+    return {
+      title: "Question not found",
+      description: "The question does not exist.",
+    }
+  }
+  return {
+    title: question.title,
+    description: question.content.slice(0, 100), 
+    twitter: {
+      card: "summary_large_image",
+      title: question.title,
+      description: question.content.slice(0, 100),
+    },
+  };
+}
 
 const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
   const { id } = await params;
