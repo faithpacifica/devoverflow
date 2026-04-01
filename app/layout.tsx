@@ -43,12 +43,13 @@ export const metadata: Metadata = {
     "data structures",
     "developer community",
   ],
-    formatDetection: {
+  formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
 
+  //robots control which pages should be hidden from search engines.
   robots: {
     index: true,
     follow: true,
@@ -63,6 +64,7 @@ export const metadata: Metadata = {
     },
   },
   authors: [
+    // TODO:linklarni to'ldirish kerak
     { name: "Dildora Muslimova", url: "https://" },
     { name: "DevTeam" },
   ],

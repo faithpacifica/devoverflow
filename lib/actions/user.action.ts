@@ -305,7 +305,7 @@ export async function getUserStats(params: GetUserParams): Promise<
 
   try {
     const [questionStats] = await Question.aggregate([
-      { $match: { author: new Types.ObjectId(userId) } },
+      { $match: { author: new Types.ObjectId(userId) } }, 
       {
         $group: {
           _id: null,

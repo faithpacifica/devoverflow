@@ -112,3 +112,10 @@ interface CreateInteractionParams {
   authorId: string;
   actionTarget: "question" | "answer";
 }
+
+interface RecommendationParams {
+  userId: string;
+  query?: string;
+  skip: number;
+  limit: number;
+}
