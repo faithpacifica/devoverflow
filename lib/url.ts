@@ -16,7 +16,7 @@ const formUrlQuery = ({ params, key, value }: UrlQueryParams) => {
   queryString[key] = value;
 
   return qs.stringifyUrl({
-    url: window.location.pathname,
+    url: window.location.pathname, 
     query: queryString,
   });
 };
