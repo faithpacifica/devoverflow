@@ -13,12 +13,13 @@ const eslintConfig = [
   ...compat.extends(
     "next/core-web-vitals",
     "next/typescript",
-    // "standard",
-  
+      "standard",
+    // "plugin:tailwindcss/recommended",
     "prettier"
   ),
   {
     ignores: [
+     "components/ui/**/*",
       "node_modules/**",
       ".next/**",
       "out/**",
