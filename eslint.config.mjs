@@ -10,27 +10,20 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  ...compat.extends(
-    "next/core-web-vitals",
-    "next/typescript",
-      "standard",
-    // "plugin:tailwindcss/recommended",
-    "prettier"
-  ),
+  ...compat.extends("next/core-web-vitals", "next/typescript", "prettier"),
   {
     ignores: [
-     "components/ui/**/*",
+      "components/ui/**/*",
       "node_modules/**",
       ".next/**",
       "out/**",
       "build/**",
       "next-env.d.ts",
     ],
-      rules: {
-    "@typescript-eslint/no-explicit-any": "off",
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+    },
   },
-  },
-  
 ];
 
 export default eslintConfig;
