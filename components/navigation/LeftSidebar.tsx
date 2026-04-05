@@ -9,6 +9,7 @@ import {
   signOut } from "@/auth";
 import { LogOut } from "lucide-react";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const LeftSidebar = ({ session }: { session: any }) => {
   const userId = session?.user?.id;
   // const session = await auth();
