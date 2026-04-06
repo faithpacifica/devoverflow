@@ -7,6 +7,21 @@ import {
   fetchLocation,
 } from "@/lib/actions/job.action";
 
+
+interface Job {
+  job_idgit: string;
+  employer_name?: string;
+  employer_logo?: string | undefined;
+  employer_website?: string;
+  job_employment_type?: string;
+  job_title?: string;
+  job_description?: string;
+  job_apply_link?: string;
+  job_city?: string;
+  job_state?: string;
+  job_country?: string;
+}
+
 const Page = async ({ searchParams }: RouteParams) => {
   const { query, location, page } = await searchParams;
   const userLocation = await fetchLocation();
@@ -34,7 +49,7 @@ const Page = async ({ searchParams }: RouteParams) => {
         {jobs?.length > 0 ? (
           jobs
             ?.filter((job: Job) => job.job_title)
-            .map((job: Job) => <JobCard key={job.job_id} job={job} />)
+            .map((job: Job) => <JobCard key={job.job_id } job={job} />)
         ) : (
           <div className="paragraph-regular text-dark200_light800 w-full text-center">
             Oops! We couldn&apos;t find any jobs at the moment. Please try again
