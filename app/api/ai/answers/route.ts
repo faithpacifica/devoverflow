@@ -1,3 +1,5 @@
+export const maxDuration = 5; 
+export const runtime = "edge";
 import { openai } from "@ai-sdk/openai";
 import { generateText } from "ai";
 import { NextResponse } from "next/server";
