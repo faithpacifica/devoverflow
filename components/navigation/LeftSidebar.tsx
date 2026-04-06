@@ -4,9 +4,7 @@ import Image from "next/image";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import ROUTES from "@/constants/routes";
-import { 
-  // auth, 
-  signOut } from "@/auth";
+import {signOut } from "@/auth";
 import { LogOut } from "lucide-react";
 
 
