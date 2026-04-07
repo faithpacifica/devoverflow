@@ -12,8 +12,8 @@ const LeftSidebar = ({ session }: { session: any }) => {
   const userId = session?.user?.id;
   // const session = await auth();
   return (
-    <section className="custom-scrollbar background-light900_dark200 light-border sticky left-0 top-0 h-screen flex flex-col  justify-between overflow-y-auto border-r p-6 pt-36 shadow-light-300 dark:shadow-none max-sm:hidden lg:w-[266px]">
-      <div className="flex flex-1 flex-col gap-5">
+    <section className="custom-scrollbar background-light900_dark200 light-border sticky left-0 top-0 h-screen flex flex-col  justify-between overflow-y-auto border-r p-6 pt-30 pb-35 shadow-light-300 dark:shadow-none max-sm:hidden lg:w-[266px]">
+      <div className="flex flex-1 flex-col gap-4">
         <NavLinks userId={userId} />
       </div>
       <div className="flex flex-col gap-3">
@@ -26,7 +26,7 @@ const LeftSidebar = ({ session }: { session: any }) => {
           >
             <Button
               type="submit"
-              className="cursor-pointer base-medium w-fit bg-transparent px-4 py-3"
+              className="cursor-pointer base-medium w-fit bg-transparent px-2 py-3"
             >
               <LogOut className="size-5 text-black dark:text-white" />
               <span className="max-lg:hidden text-dark300_light900">
