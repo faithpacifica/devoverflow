@@ -95,8 +95,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         providerAccountId: account.providerAccountId,
       })) as ActionResponse;
 
-      if (!success) return false;
+      const res = await api.auth.oAuthSignIn({
+        user: userInfo,
+        provider: account.provider as "github" | "google",
+        providerAccountId: account.providerAccountId,
+      });
 
+      console.log("OAUTH RESPONSE:", res);
+
+      if (!success) 
+        console.log("OAuth error");
       return true;
     },
   },
