@@ -228,7 +228,8 @@ export const getQuestion = cache(async function getQuestion(
   try {
     const question = await Question.findById(questionId)
       .populate("tags", "_id name")
-      .populate("author", "_id name image");
+      .populate("author", "_id name image")
+      .lean();
 
     if (!question) {
       throw new Error("Question not found");
@@ -336,7 +337,7 @@ export async function getQuestions(
   let sortCriteria = {};
 
   try {
-      if (filter === "recommended") {
+    if (filter === "recommended") {
       const session = await auth();
       const userId = session?.user?.id;
 
@@ -364,7 +365,7 @@ export async function getQuestions(
     }
 
     // Filters
-    switch (filter ) {
+    switch (filter) {
       case "newest":
         sortCriteria = { createdAt: -1 }; //-1 bu kamayish tartibini bildiradi, ya'ni yangi yaratilganlar birinchi bo'ladi
         break;

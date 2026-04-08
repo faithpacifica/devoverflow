@@ -57,7 +57,7 @@ const MobileNavigation = async () => {
 
           <div className="flex flex-col gap-3">
             {userId ? (
-              <SheetClose asChild>
+              // <SheetClose asChild>
                 <form
                   action={async () => {
                     "use server";
@@ -73,7 +73,7 @@ const MobileNavigation = async () => {
                     <span className="text-dark300_light900">Log Out</span>
                   </Button>
                 </form>
-              </SheetClose>
+              // </SheetClose>
             ) : (
               <>
                 <SheetClose asChild>
